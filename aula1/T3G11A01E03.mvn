@@ -29,12 +29,19 @@
 0F00 0004 ; Endereço (inicialmente 0004) de onde se deseja ler o dado
 0F02 8000 ; Código de operação LOAD, com operando 000
 ;
-; Sub-rotina SUBTRAIR
+; Sub-rotina MAIOR
 ; Parâmetros formais
+003A 0001 : RESULTADO
 003C 0000 ; X
 003E 0000 ; Y 
 ; Corpo da sub-rotina
 0040 0000 ; Endereço de retorno
-0042 803C ; Carrega o conteúdo de X
-0044 503E ; Subtrai Y, resultado no ACUMULADOR
-0046 B040 ; Retorna para o endereço contido em 0x040
+0042 3001 ; Carrego ACUMULADOR com 1 (Verdadeiro)
+0044 903A ; Carrego RESULTADO com o valor 1 do ACUMULADOR
+0046 803C ; Carrega o conteúdo de X
+0048 503E ; Subtrai Y, resultado no ACUMULADOR
+004A 204E ; Se ACUMULADOR é negativo, pulo a próxima instrução 
+004C 0052 ; Retorna para o endereço contido em 0x040
+004E 3001 ; Se está aqui, é porque é menor e coloco o ACUMULADOR em 0
+0050 903A ; Se está aqui, é porque é menor e copio o valor 0 do ACUMULADOR para o RESULTADO 
+0052 B040 ; Retorna para o endereço contido em 0x040
