@@ -1,0 +1,27 @@
+; Exercicio 2 da aula 01
+; Programa que dada uma lista de numeros inteiros positivos terminadas por FFFF
+; calcula a soma dos quadrados dos elementos da sequencia.
+0000 0100 ; Ponto de entrada, pulo para as instrucoes
+; --Variaveis do programa
+0002 0000 ; RESULTADO - variavel de saida (para esta entrada 00 1E)
+; Lista de entrada
+0004 0001
+0006 0002
+0008 0003
+000A 0004
+000C FFFF
+; Constantes do programa
+0348 0002 ; Constante 0002 (Incrementar a posicao)
+034A 0001 ; Constante 0001 (Incremento)
+; MAIN
+0100 8F00;
+
+
+
+; Sub-rotina: QUAD
+
+
+
+0F00 0004 ; Endereco (0004) de onde se deseja ler o dado
+0F02 8000 ; LOAD com operando 000
+0F04
