@@ -1,0 +1,15 @@
+; prog1.mvn
+; Soma os valores de duas posições de memória e guarda o
+; resultado em outra posição de memória, parando na
+; instrução final.
+0000 0008 ; Ponto de entrada: pulo para as instruções
+; Constantes do programa
+0002 FF83 ; A = 0xFF83 (-125)
+0004 0064 ; B = 0x0064 (100)
+; Variáveis do programa
+0006 0000 ; RESULTADO deverá ser 0xFFE7 (-25)
+; Instruções do programa
+0008 8002 ; Carrega o valor de A no acumulador
+000A 4004 ; Adiciona B ao conteúdo do acumulador
+000C 9006 ; Armazena o resultado em RESULTADO
+000E C00E ; Para em 0x000E

@@ -1,0 +1,29 @@
+; prog3.mvn
+; Programa de ilustração de auto-modificação do código
+; Lê uma sequência de dados contidos entre 034C a 0352
+0000 0100 ; Ponto de entrada: pulo para as instruções
+;
+0100 8F00 ; Obtém o endereço de onde se deseja ler o dado
+0102 4F02 ; Compõe o endereço com o código de operação LOAD
+0104 9106 ; Guarda instrução montada para ser executada
+0106 0000 ; Executa a instrução recém-montada
+0108 8F00 ; Carrega o endereço da variável na lista
+010A 4348 ; Soma com a constante 0002 (desloca uma posição)
+010C 9F00 ; Altera o conteúdo de 0F00 com o novo endereço
+010E 5F04 ; Subtrai com o endereço de parada
+0110 1114 ; Se zero, condição de parada, salta para fora
+0112 0100 ; Se não zero, volta para o início 
+0114 C114 ; Termina o programa
+;
+;
+0348 0002 ; Constante 0002 (ADDR+1)
+;
+;Lista de valores a serem lidos (variáveis)
+034C 0002
+034E 0004
+0350 0006
+0352 0008
+;
+0F00 034C ; Endereço (034C) de onde se deseja ler o dado
+0F02 8000 ; Código de operação LOAD, com operando 000
+0F04 0354 ; Último endereço a ser lido + 1 (0352 + 0002)
