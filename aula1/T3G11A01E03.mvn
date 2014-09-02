@@ -1,1 +1,40 @@
 ;prog4.mvn
+; Programa que, dada uma sequencia de 5 dados, verifica se ela está escrita em ordem crescente
+0000 0100 ; Ponto de entrada: pulo para as instruções
+;Variáveis do programa
+0002 0001 ; Resultado do programa
+;
+;Lista de dados
+0004 0001 
+0006 0002
+0008 0003
+000A 0004
+000C 0005
+;
+0100 8F00 ; Obtém o endereço de onde se deseja ler o dado
+0102 4F02 ; Compõe o endereço com o código de operação LOAD
+0104 9106 ; Guarda instrução montada para ser executada
+0106 0000 ; Executa a instrução recém-montada
+0108 8F00 ; Carrega o endereço da variável na lista
+010A 4348 ; Soma com a constante 0002 (desloca uma posição)
+010C 9F00 ; Altera o conteúdo de 0F00 com o novo endereço
+010E 5F04 ; Subtrai com o endereço de parada
+0110 1114 ; Se zero, condição de parada, salta para fora
+0112 0100 ; Se não zero, volta para o início 
+0114 C114 ; Termina o programa
+;
+;
+0348 0002 ; Constante 0002 (ADDR+1)
+;
+0F00 0004 ; Endereço (inicialmente 0004) de onde se deseja ler o dado
+0F02 8000 ; Código de operação LOAD, com operando 000
+;
+; Sub-rotina SUBTRAIR
+; Parâmetros formais
+003C 0000 ; X
+003E 0000 ; Y 
+; Corpo da sub-rotina
+0040 0000 ; Endereço de retorno
+0042 803C ; Carrega o conteúdo de X
+0044 503E ; Subtrai Y, resultado no ACUMULADOR
+0046 B040 ; Retorna para o endereço contido em 0x040
