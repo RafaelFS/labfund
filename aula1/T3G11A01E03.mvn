@@ -11,7 +11,7 @@
 000A 0004
 000C 0005
 ;
-0100 8F00 ; Obtém o endereço de onde se deseja ler o dado
+0100 8F00 ; Obtém o endereço de onde se deseja ler o dado (inicialmente 0F00)
 0102 4F02 ; Compõe o endereço com o código de operação LOAD
 0104 9106 ; Guarda instrução montada para ser executada
 0106 0000 ; Executa a instrução recém-montada
@@ -28,10 +28,11 @@
 ;
 0F00 0004 ; Endereço (inicialmente 0004) de onde se deseja ler o dado
 0F02 8000 ; Código de operação LOAD, com operando 000
+0F04 000C ; Endereço de parada (000C)
 ;
 ; Sub-rotina MAIOR
 ; Parâmetros formais
-003A 0001 : RESULTADO
+003A 0001 ; RESULTADO
 003C 0000 ; X
 003E 0000 ; Y 
 ; Corpo da sub-rotina
