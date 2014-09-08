@@ -1,28 +1,50 @@
 ;prog4.mvn
 ; Programa que, dada uma sequencia de 5 dados, verifica se ela está escrita em ordem crescente
 0000 0100 ; Ponto de entrada: pulo para as instruções
-;Variáveis do programa
-0002 0001 ; Resultado do programa
+; Variáveis do programa
+0002 0000 ; Resultado do programa
 ;
-;Lista de dados
+; Lista de dados
 0004 0001 
 0006 0002
-0008 0003
+0008 0005
 000A 0004
-000C 0005
+000C 0003
 ;
-0100 8F00 ; Obtém o endereço de onde se deseja ler o dado (inicialmente 0F00)
-0102 4F02 ; Compõe o endereço com o código de operação LOAD
+; Preparação para o loop de verificação
+0100 8F00 ; Obtenho o endereço do primeiro dado
+0102	4F02 ; Compõe o endereço com o código de operação LOAD	
 0104 9106 ; Guarda instrução montada para ser executada
-0106 0000 ; Executa a instrução recém-montada
-0108 8F00 ; Carrega o endereço da variável na lista
-010A 4348 ; Soma com a constante 0002 (desloca uma posição)
-010C 9F00 ; Altera o conteúdo de 0F00 com o novo endereço
-010E 5F04 ; Subtrai com o endereço de parada
-0110 1114 ; Se zero, condição de parada, salta para fora
-0112 0100 ; Se não zero, volta para o início 
-0114 C114 ; Termina o programa
-;
+0106 0000 ; Executo a operação de load e obtenho o valor do primeiro dado 
+0108 903E ; Coloca o primeiro dado na posição Y da sub-rotina
+; Termino a preparação carregando o próximo endereço
+010A 8F00 ; Obtenho o endereço do primeiro dado
+010C 4348 ; Soma o endereço com a constante 0002 (desloca uma posição)
+010E 9F00 ; Altera o conteúdo de 0F00 com o novo endereço
+; Início do loop de verificação
+0110 4F02 ; Compõe o endereço com o código de operação LOAD
+0112 9114 ; Guarda instrução montada para ser executada
+0114 0000 ; Executa a instrução recém-montada
+0116 903C ; Coloca o dado atual na posição X da sub-rotina
+;Chamada de MAIOR
+0118 A040 ; Chama a sub-rotina MAIOR
+011A 803A ; Copia o resultado de MAIOR para o acumulador
+011C 9002 ; Copia o resultado de MAIOR, presente no acumulador, para o resultado do programa
+;Verificação de MAIOR
+011E 1132 ; Se o resultado de MAIOR for 0, a lista não está ordenada e pula para o final
+; Se estou aqui, MAIOR foi 1. Verifico se acabou
+0120 8F00 ;  Copia o endereço do último dado lido para o acumulador
+0122 5F04 ; Subtrai com o endereço de parada
+0124 1132 ; Se zero, condição de parada, salta para o fim
+; Se não for zero, na subrotina copio X para Y 
+0126 803C ; Obtém o X de MAIOR  
+0128 903E ; Coloca o valor de X na posição Y
+; Obtenho o novo endereço
+012A 8F00 ; Copia o endereço do último dado lido para o acumulador
+012C 4348 ; Soma o endereço com a constante 0002 (desloca uma posição)
+012E 9F00 ; Altera o conteúdo de 0F00 com o novo endereço
+0130 0110 ; Pula para o início do loop de verificação
+0132 C114 ; Termina o programa
 ;
 0348 0002 ; Constante 0002 (ADDR+1)
 ;
@@ -31,6 +53,9 @@
 0F04 000C ; Endereço de parada (000C)
 ;
 ; Sub-rotina MAIOR
+; Verifica se X>Y, guardando 1 em RESULTADO se a afirmação é verdadeira 
+; e 0 se a afirmação é falsa. 
+;
 ; Parâmetros formais
 003A 0001 ; RESULTADO
 003C 0000 ; X
