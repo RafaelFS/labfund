@@ -1,27 +1,46 @@
 ; Exercicio 2 da aula 01
 ; Programa que dada uma lista de numeros inteiros positivos terminadas por FFFF
 ; calcula a soma dos quadrados dos elementos da sequencia.
+; Assume-se que nao ha entrada de dados incorretos.
 0000 0100 ; Ponto de entrada, pulo para as instrucoes
 ; --Variaveis do programa
 0002 0000 ; RESULTADO - variavel de saida (para esta entrada 00 1E)
+034C 0000 ; Sera usado como multiplicador
 ; Lista de entrada
-0004 0001
-0006 0002
-0008 0003
-000A 0004
-000C FFFF
+0004 0000
+0006 0001
+0008 0001
+000A FFFF
 ; Constantes do programa
 0348 0002 ; Constante 0002 (Incrementar a posicao)
 034A 0001 ; Constante 0001 (Incremento)
 ; MAIN
-0100 8F00;
+; Leitura da lista
+0100 8F00 ; Obtem o endereco de onde se deseja ler o dado
+0102 4F02 ; Compoe o endereco com 8000 (Codigo de operacao LOAD)
+0104 9106 ; Guarda instrucao montada para ser executada
+0106 0000 ; Executa a instrucao montada
+; Condicao de parada (ultimo dado da lista = FFFF)
+0108 434A ; Soma o dado da lista com 1 para realizar a comparacao
+010A 1F04 ; Se dado da lista + 1 = 0, entao dado da lista = FFFF (condicao de parada).
+010C 534A ; Subtrai o 1 que foi adicionado para realizar a comparacao.
+; Operacao e armazenamento na memoria
+010E AF06 ; Sub-rotina QUAD
+0110 4002 ; Soma com a variavel resultado
+0112 9002 ; Armazena na variavel resultado
+; Auto-modificacao do codigo
+0114 8F00 ; Carrega o endereco da variavel na lsita
+0116 4348 ; Desloca uma posicao na lista
+0118 9F00 ; Altera o conteudo de 0xF00 com o novo endereco
+011A 0100 ; Desvio incondicional para o inicio do programa
 
-
-
-; Sub-rotina: QUAD
-
-
-
+; Enderecos da lista
 0F00 0004 ; Endereco (0004) de onde se deseja ler o dado
 0F02 8000 ; LOAD com operando 000
-0F04
+0F04 CF04 ; Para em 0xF04
+
+; Sub-rotina: QUAD
+0F06 0000 ; Endereco de retorno
+0F08 934C ; Guarda o dado da lista na memoria 0x34C
+0F0A 634C ; Multiplica o acumulador pelo dado na memoria 0x34C (x^2)
+0F0C BF06 ; Retorna para o endereco contido em 0xF06
