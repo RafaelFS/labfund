@@ -14,6 +14,8 @@ FIM			HM
 
 UNPACK_W1	K		/0000		; Endereço da primeira palavra resultado de UNPACK 
 UNPACK_W2	K		/0000		; Endereço da segunda palavra resultado de UNPACK
+PACKAGE		K 		/0000       ; Word empacotada
 UNPACK 		K 		/0000		; Início da subrotina UNPACK (endereço reservado para retorno)
+			MM 		PACKAGE		; Copia o contéudo do Acumulador para PACKAGE;
 			
 			#	
