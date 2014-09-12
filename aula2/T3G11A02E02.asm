@@ -1,6 +1,6 @@
 			@ 		/0000		; Avisa o montador que o endereço inicial do programa é 0000
 INI			JP		MAIN		; Pula para o início do programa MAIN
-			IN  	/1234		; Word a ser desempacotada
+IN 			K 		/1234		; Word a ser desempacotada
 OUT1 		K		/0000   	; Primeira word de saída
 OUT2		K		/0000 		; Segunda word de saída
 
@@ -14,7 +14,7 @@ MAIN		LV		OUT1 		; Coloca o endereço de OUT1 no Acumulador
 			MM 		W2XADDRESS	; Copia o conteúdo do Acumulador para W2XADDRESS
 			LD		IN 			; Copia o conteúdo de IN para o Acumulador
 			SC  	UNPACK      ; Executa a subrotina UNPACK
-FIMDEMAIN	HM
+FIMDEMAIN	HM		FIMDEMAIN   ; Fim do programa
 
 ; Subrotina que desempacota a palavra presente no Acumulador e salva as palavras resultantes nos
 ; endereço armazenado em UNPACK_W1 e UNPACK_W2
@@ -40,7 +40,7 @@ POSITIVO	/		/100		; Se a palavra é positiva, divido por /100 para obter a prime
 SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 			*		/100		; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
 			MM  	W1DESLOCADA	; Salvo a palavra 1 deslocada em W1DESLOCADA
-			LV 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
+			LD 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
 			- 		W1DESLOCADA	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
 			MM		W2 			; Copio a segunda palavra em W2;
 			LD      W2XADDRESS  ; Copio o endereço de saída da segunda palavra para o Acumulador
@@ -48,8 +48,7 @@ SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, 
 			MM		SALVA2		; Tranfere a instrução completa para a posição SALVA1
 			LV 		W2 			; Copia o valor de W2 para o Acumulador
 SALVA2      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
-			JP FIMDEUNPACK
-NEGATIVO
-FIMDEUNPACK	RS 					; Retorno da subrotina
+			JP 		FIMDEUNPACK
+NEGATIVO    K 		/0000		
+FIMDEUNPACK	RS 		UNPACK		; Retorno da subrotina
 			#		INI
-
