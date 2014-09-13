@@ -13,7 +13,7 @@
 000e 3006		;				LV		OUT2 		; Coloca o endereço de OUT2 no Acumulador
 0010 901a		;				MM 		W2XADDRESS	; Copia o conteúdo do Acumulador para W2XADDRESS
 0012 8002		;				LD		INPUT 		; Copia o conteúdo de INPUT para o Acumulador
-0014 a024		;				SC  	UNPACK      ; Executa a subrotina UNPACK
+0014 a026		;				SC  	UNPACK      ; Executa a subrotina UNPACK
 0016 c016		;	FIMDEMAIN	HM		FIMDEMAIN   ; Fim do programa
 
 ; Subrotina que desempacota a palavra presente no Acumulador e salva as palavras resultantes nos
@@ -26,28 +26,28 @@
 001e 0000		;	W2 			K		/0000		; Palavra 2 (2 ultimos digitos da original)
 0020 0000		;	PACKAGE		K 		/0000       ; Word empacotada
 0022 0000		;	W1DESLOCADA K		/0000		; A primeira palavra deslocada
-
+0024 0100		;	DESLOCADOR	K 		/0100
 ;Corpo da subrotina
-0024 0000		;	UNPACK 		K 		/0000		; Início da subrotina UNPACK (endereço reservado para retorno)
-0026 9020		;				MM 		PACKAGE		; Copia o contéudo do Acumulador para PACKAGE;
-			;JN		NEGATIVO    ; Se a palavra é um número negativo, pula para o caso NEGATIVO
-0028 7100		;	POSITIVO	/		/100		; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
-002a 901c		;				MM		W1 			; Copio a primeira palavra em W1;
-002c 8018		;				LD      W1XADDRESS  ; Copio o endereço de saída da primeira palavra para o Acumulador
-002e 4008		;				+		MMVAZIA		; Combina o endereço de saída da primeira palavra com a isntrução MM
-0030 9034		;				MM		SALVA1		; Tranfere a instrução completa para a posição SALVA1
-0032 301c		;				LV 		W1 			; Copia o valor de W1 para o Acumulador
-0034 0000		;	SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
-0036 6100		;				*		/100		; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
-0038 9022		;				MM  	W1DESLOCADA	; Salvo a palavra 1 deslocada em W1DESLOCADA
-003a 8020		;				LD 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
-003c 5022		;				- 		W1DESLOCADA	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
-003e 901e		;				MM		W2 			; Copio a segunda palavra em W2;
-0040 801a		;				LD      W2XADDRESS  ; Copio o endereço de saída da segunda palavra para o Acumulador
-0042 4008		;				+		MMVAZIA		; Combina o endereço de saída da segunda palavra com a instrução MM
-0044 9048		;				MM		SALVA2		; Tranfere a instrução completa para a posição SALVA1
-0046 301e		;				LV 		W2 			; Copia o valor de W2 para o Acumulador
-0048 0000		;	SALVA2      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
-004a 004c		;				JP 		FIMDEUNPACK
-;NEGATIVO    K 		/0000		
-004c b024		;	FIMDEUNPACK	RS 		UNPACK		; Retorno da subrotina
+0026 0000		;	UNPACK 		K 		/0000		; Início da subrotina UNPACK (endereço reservado para retorno)
+0028 9020		;				MM 		PACKAGE		; Copia o contéudo do Acumulador para PACKAGE;
+002a 2050		;				JN		NEGATIVO    ; Se a palavra é um número negativo, pula para o caso NEGATIVO
+002c 7024		;	POSITIVO	/		DESLOCADOR	; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
+002e 901c		;				MM		W1 			; Copio a primeira palavra em W1;
+0030 8018		;				LD      W1XADDRESS  ; Copio o endereço de saída da primeira palavra para o Acumulador
+0032 4008		;				+		MMVAZIA		; Combina o endereço de saída da primeira palavra com a isntrução MM
+0034 9038		;				MM		SALVA1		; Tranfere a instrução completa para a posição SALVA1
+0036 301c		;				LV 		W1 			; Copia o valor de W1 para o Acumulador
+0038 0000		;	SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
+003a 6024		;				*		DESLOCADOR	; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
+003c 9022		;				MM  	W1DESLOCADA	; Salvo a palavra 1 deslocada em W1DESLOCADA
+003e 8020		;				LD 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
+0040 5022		;				- 		W1DESLOCADA	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
+0042 901e		;				MM		W2 			; Copio a segunda palavra em W2;
+0044 801a		;				LD      W2XADDRESS  ; Copio o endereço de saída da segunda palavra para o Acumulador
+0046 4008		;				+		MMVAZIA		; Combina o endereço de saída da segunda palavra com a instrução MM
+0048 904c		;				MM		SALVA2		; Tranfere a instrução completa para a posição SALVA1
+004a 301e		;				LV 		W2 			; Copia o valor de W2 para o Acumulador
+004c 0000		;	SALVA2      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
+004e 0052		;				JP 		FIMDEUNPACK
+0050 0000		;	NEGATIVO    K 		/0000		
+0052 b026		;	FIMDEUNPACK	RS 		UNPACK		; Retorno da subrotina

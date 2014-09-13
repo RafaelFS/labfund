@@ -26,19 +26,19 @@ W1 			K		/0000       ; Palavra 1 (2 primeiros digitos da original)
 W2 			K		/0000		; Palavra 2 (2 ultimos digitos da original)
 PACKAGE		K 		/0000       ; Word empacotada
 W1DESLOCADA K		/0000		; A primeira palavra deslocada
-
+DESLOCADOR	K 		/0100
 ;Corpo da subrotina
 UNPACK 		K 		/0000		; Início da subrotina UNPACK (endereço reservado para retorno)
 			MM 		PACKAGE		; Copia o contéudo do Acumulador para PACKAGE;
-			;JN		NEGATIVO    ; Se a palavra é um número negativo, pula para o caso NEGATIVO
-POSITIVO	/		/100		; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
+			JN		NEGATIVO    ; Se a palavra é um número negativo, pula para o caso NEGATIVO
+POSITIVO	/		DESLOCADOR	; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
 			MM		W1 			; Copio a primeira palavra em W1;
 			LD      W1XADDRESS  ; Copio o endereço de saída da primeira palavra para o Acumulador
 			+		MMVAZIA		; Combina o endereço de saída da primeira palavra com a isntrução MM
 			MM		SALVA1		; Tranfere a instrução completa para a posição SALVA1
 			LV 		W1 			; Copia o valor de W1 para o Acumulador
 SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
-			*		/100		; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
+			*		DESLOCADOR	; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
 			MM  	W1DESLOCADA	; Salvo a palavra 1 deslocada em W1DESLOCADA
 			LD 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
 			- 		W1DESLOCADA	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
@@ -49,6 +49,6 @@ SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, 
 			LV 		W2 			; Copia o valor de W2 para o Acumulador
 SALVA2      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 			JP 		FIMDEUNPACK
-;NEGATIVO    K 		/0000		
+NEGATIVO    K 		/0000		
 FIMDEUNPACK	RS 		UNPACK		; Retorno da subrotina
 			#		INI
