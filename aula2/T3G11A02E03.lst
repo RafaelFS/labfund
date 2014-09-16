@@ -5,24 +5,42 @@
 		
 				;				@ 		/0000		; Avisa o montador que o endereço inicial do programa é 0000
 0000 0030		;	INI			JP		MAIN		; Pula para o início do programa MAIN
-0002 0004		;	NWORDS		K		/0004		; Número de palavras a serem copiadas
-0004 0000		;	ENDORIGEM	K		/0000		; Endereço inicial da sequência de origem
-0006 0000		;	ENDDESTINO	K		/0000		; Endereço inicial da sequência de destino
+0002 0000		;	NWORDS		K		/0000		; Número de palavras a serem copiadas
+0004 5000		;	ENDORIGEM	K		/5000		; Endereço inicial da sequência de origem
+0006 7000		;	ENDDESTINO	K		/7000		; Endereço inicial da sequência de destino
 				;				@		/0030		; Reservo o espaço até o endereço 28, avisando que a próxima instrução ocorre no endereço 30
 ;Corpo do programa principal
 0030 8002		;	MAIN		LD 		NWORDS		; Copia o conteúdo de NWORDS para o Acumulador
-0032 9040		;				MM 		SUBNWORDS	; Copia o conteúdo de NWORDS para SUBNWORDS
+0032 9040		;				MM 		SNWORDS		; Copia o conteúdo de NWORDS para SNWORDS
 0034 8004		;				LD 		ENDORIGEM	; Copia o conteúdo de ENDORIGEM para o Acumulador
-0036 9042		;				MM 		SUBENDORI	; Copia o conteúdo de ENDORIGEM para SUBENDORI
+0036 9042		;				MM 		SENDORIGEM	; Copia o conteúdo de ENDORIGEM para SENDORIGEM
 0038 8006		;				LD 		ENDDESTINO	; Copia o conteúdo de ENDDESTINO para o Acumulador
-003a 9044		;				MM 		SUBENDDES	; Copia o conteúdo de ENDDESTINO para SUBENDDES
-003c a046		;				SC  	MEMCOPY     ; Executa a subrotina MEMCOPY
+003a 9044		;				MM 		SENDDESTINO	; Copia o conteúdo de ENDDESTINO para SENDDESTINO
+003c a054		;				SC  	MEMCOPY     ; Executa a subrotina MEMCOPY
 003e c03e		;	FIMDEMAIN	HM		FIMDEMAIN   ; Fim do programa	 
 
 
 ;Variáveis da subrotina
-0040 0000		;	SUBNWORDS 	K		/0000		; Número de palavras a serem copiadas (cópia da subrotina)
-0042 0000		;	SUBENDORI	K		/0000		; Endereço inicial da sequência de origem (cópia da subrotina)
-0044 0000		;	SUBENDDES 	K		/0000		; Endereço inicial da sequência de destino (cópia da subrotina)
+0040 0000		;	SNWORDS 	K		/0000		; Número de palavras a serem copiadas (cópia da subrotina)
+0042 0000		;	SENDORIGEM	K		/0000		; Endereço inicial da sequência de origem (cópia da subrotina)
+0044 0000		;	SENDDESTINO	K		/0000		; Endereço inicial da sequência de destino (cópia da subrotina)
+0046 0000		;	SORIATUAL	K		/0000		; Endereço atual que eu estou lendo	
+0048 0000		;	SDESATUAL	K		/0000		; Endereço atual para onde estou copiando
+004a 0000		;	CONTAGEM	K		/0000		; Número de palavras que ainda preciso copiar
+004c 0000		;	OK			K		/0000		; Código de retorno de funcionamento correto
+004e ffff		;	ERRO 		K		/FFFF		; Código de retorno de caso de erro 
+0050 9000		;	MMVAZIA		MM      /0000
+0052 9000		;	LDVAZIA		MM      /0000
+
 ;Corpo da Subrotina
-0046 0000		;	MEMCOPY		K 		/0000		; Início da subrotina MEMCOPY (endereço reservado para retorno)
+0054 0000		;	MEMCOPY		K 		/0000		; Início da subrotina MEMCOPY (endereço reservado para retorno)
+			;Inicio colocando os valores iniciais das variáveis de controle
+0056 8042		;				LD      SENDORIGEM  ; Copio o endereço de origem para o Acumulador
+0058 9046		;				MM 		SORIATUAL   ; Copio o endereço de origem para endereço que estou lendo
+005a 8040		;				LD      SNWORDS     ; Copio o endereço de destino para o Acumulador
+005c 9048		;				MM 		SDESATUAL   ; Copio o endereço de destino para endereço que estou lendo
+005e 8040		;				LD      SNWORDS     ; Copio o número de palavras para o Acumulador
+0060 904a		;				MM 		CONTAGEM    ; Copio o número de palavras para CONTAGEM
+0062 1064		;	LOOP 		JZ		FIMMEMCOPY  ; Pula para fora do LOOP se CONTAGEM = 0
+0064 804c		;	FIMMEMCOPY	LD 		OK			; Coloco o código de OK no Acumulador
+0066 b054		;				RS 		MEMCOPY		; Retorno da subrotina
