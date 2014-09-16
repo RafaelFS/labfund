@@ -5,7 +5,7 @@ OUT1 		K		/0000   	; Primeira word de saída
 OUT2		K		/0000 		; Segunda word de saída
 
 ;Variáveis auxiliares
-MMVAZIA		LV      /0000		; Move to memory vazia para criação de instrução dinamicamente
+MMVAZIA		MM      /0000		; Move to memory vazia para criação de instrução dinamicamente
 
 ; Corpo do programa principal
 MAIN		LV		OUT1 		; Coloca o endereço de OUT1 no Acumulador
@@ -36,8 +36,9 @@ POSITIVO	/		DESLOCADOR	; Se a palavra é positiva, divido por /100 para obter a 
 			LD      W1XADDRESS  ; Copio o endereço de saída da primeira palavra para o Acumulador
 			+		MMVAZIA		; Combina o endereço de saída da primeira palavra com a isntrução MM
 			MM		SALVA1		; Tranfere a instrução completa para a posição SALVA1
-			LV 		W1 			; Copia o valor de W1 para o Acumulador
+			LD 		W1 			; Copia o valor de W1 para o Acumulador
 SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
+			LD 		W1 			; Copia o valor de W1 para o Acumulador
 			*		DESLOCADOR	; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
 			MM  	W1DESLOCADA	; Salvo a palavra 1 deslocada em W1DESLOCADA
 			LD 		PACKAGE 	; Copio a palavra empacotada para o Acumulador
@@ -46,7 +47,7 @@ SALVA1      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, 
 			LD      W2XADDRESS  ; Copio o endereço de saída da segunda palavra para o Acumulador
 			+		MMVAZIA		; Combina o endereço de saída da segunda palavra com a instrução MM
 			MM		SALVA2		; Tranfere a instrução completa para a posição SALVA1
-			LV 		W2 			; Copia o valor de W2 para o Acumulador
+			LD 		W2 			; Copia o valor de W2 para o Acumulador
 SALVA2      K		/0000		; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 			JP 		FIMDEUNPACK
 NEGATIVO    K 		/0000		
