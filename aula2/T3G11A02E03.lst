@@ -1,0 +1,28 @@
+; A02E03
+; Subrotina que copia uma sequência de tamanho arbitrário de bytes da 
+; memória de uma posição em outra. Retorna 0000 em caso de 
+; sucesso e FFFF em caso de erro
+		
+				;				@ 		/0000		; Avisa o montador que o endereço inicial do programa é 0000
+0000 0030		;	INI			JP		MAIN		; Pula para o início do programa MAIN
+0002 0004		;	NWORDS		K		/0004		; Número de palavras a serem copiadas
+0004 0000		;	ENDORIGEM	K		/0000		; Endereço inicial da sequência de origem
+0006 0000		;	ENDDESTINO	K		/0000		; Endereço inicial da sequência de destino
+				;				@		/0030		; Reservo o espaço até o endereço 28, avisando que a próxima instrução ocorre no endereço 30
+;Corpo do programa principal
+0030 8002		;	MAIN		LD 		NWORDS		; Copia o conteúdo de NWORDS para o Acumulador
+0032 9040		;				MM 		SUBNWORDS	; Copia o conteúdo de NWORDS para SUBNWORDS
+0034 8004		;				LD 		ENDORIGEM	; Copia o conteúdo de ENDORIGEM para o Acumulador
+0036 9042		;				MM 		SUBENDORI	; Copia o conteúdo de ENDORIGEM para SUBENDORI
+0038 8006		;				LD 		ENDDESTINO	; Copia o conteúdo de ENDDESTINO para o Acumulador
+003a 9044		;				MM 		SUBENDDES	; Copia o conteúdo de ENDDESTINO para SUBENDDES
+003c a046		;				SC  	MEMCOPY     ; Executa a subrotina MEMCOPY
+003e c03e		;	FIMDEMAIN	HM		FIMDEMAIN   ; Fim do programa	 
+
+
+;Variáveis da subrotina
+0040 0000		;	SUBNWORDS 	K		/0000		; Número de palavras a serem copiadas (cópia da subrotina)
+0042 0000		;	SUBENDORI	K		/0000		; Endereço inicial da sequência de origem (cópia da subrotina)
+0044 0000		;	SUBENDDES 	K		/0000		; Endereço inicial da sequência de destino (cópia da subrotina)
+;Corpo da Subrotina
+0046 0000		;	MEMCOPY		K 		/0000		; Início da subrotina MEMCOPY (endereço reservado para retorno)
