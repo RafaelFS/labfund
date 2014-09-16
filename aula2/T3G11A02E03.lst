@@ -3,78 +3,95 @@
 ; memória de uma posição em outra. Retorna 0000 em caso de 
 ; sucesso e FFFF em caso de erro
 		
-				;				@ 		/0000		; Avisa o montador que o endereço inicial do programa é 0000
-0000 0030		;	INI			JP		MAIN		; Pula para o início do programa MAIN
-0002 0000		;	NWORDS		K		/0000		; Número de palavras a serem copiadas
-0004 0008		;	ENDORIGEM	K		/0008		; Endereço inicial da sequência de origem
-0006 0012		;	ENDDESTINO	K		/0012		; Endereço inicial da sequência de destino
-0008 0001		;	SEQORIGEM	K 		/0001		; Inicio dos endereços reservados para a origem
-000a 0002		;				K		/0002		
-000c 0003		;				K 		/0003
-000e 0004		;				K		/0004		
-				;				@		/0010		; Seto os 4 endereços a partir do 10 com FFFF para melhorar visualização dos testes
-0010 ffff		;				K		/FFFF
-0012 ffff		;				K		/FFFF
-0014 ffff		;				K		/FFFF
-0016 ffff		;				K		/FFFF
-				;				@		/0030		; Reservo o espaço até o endereço 28, avisando que a próxima instrução ocorre no endereço 30
+				;					@ 		/0000			; Avisa o montador que o endereço inicial do programa é 0000
+0000 0030		;	INI				JP		MAIN			; Pula para o início do programa MAIN
+0002 0003		;	NWORDS			K		/0003			; Número de palavras a serem copiadas
+0004 0008		;	ENDORIGEM		K		/0008			; Endereço inicial da sequência de origem
+0006 0010		;	ENDDESTINO		K		/0010			; Endereço inicial da sequência de destino
+0008 0001		;	SEQORIGEM		K 		/0001			; Inicio dos endereços reservados para a origem
+000a 0002		;					K		/0002		
+000c 0003		;					K 		/0003
+000e 0004		;					K		/0004		
+				;					@		/0010			; Seto os 4 endereços a partir do 10 com FFFF para melhorar visualização dos testes
+0010 ffff		;					K		/FFFF
+0012 ffff		;					K		/FFFF
+0014 ffff		;					K		/FFFF
+0016 ffff		;					K		/FFFF
+				;					@		/0030			; Reservo o espaço até o endereço 28, avisando que a próxima instrução ocorre no endereço 30
 ;Corpo do programa principal
-0030 8002		;	MAIN		LD 		NWORDS		; Copia o conteúdo de NWORDS para o Acumulador
-0032 9040		;				MM 		SNWORDS		; Copia o conteúdo de NWORDS para SNWORDS
-0034 8004		;				LD 		ENDORIGEM	; Copia o conteúdo de ENDORIGEM para o Acumulador
-0036 9042		;				MM 		SENDORIGEM	; Copia o conteúdo de ENDORIGEM para SENDORIGEM
-0038 8006		;				LD 		ENDDESTINO	; Copia o conteúdo de ENDDESTINO para o Acumulador
-003a 9044		;				MM 		SENDDESTINO	; Copia o conteúdo de ENDDESTINO para SENDDESTINO
-003c a05a		;				SC  	MEMCOPY     ; Executa a subrotina MEMCOPY
-003e c03e		;	FIMDEMAIN	HM		FIMDEMAIN   ; Fim do programa	 
+0030 8002		;	MAIN			LD 		NWORDS			; Copia o conteúdo de NWORDS para o Acumulador
+0032 9040		;					MM 		SNWORDS			; Copia o conteúdo de NWORDS para SNWORDS
+0034 8004		;					LD 		ENDORIGEM		; Copia o conteúdo de ENDORIGEM para o Acumulador
+0036 9042		;					MM 		SENDORIGEM		; Copia o conteúdo de ENDORIGEM para SENDORIGEM
+0038 8006		;					LD 		ENDDESTINO		; Copia o conteúdo de ENDDESTINO para o Acumulador
+003a 9044		;					MM 		SENDDESTINO		; Copia o conteúdo de ENDDESTINO para SENDDESTINO
+003c a05e		;					SC  	MEMCOPY     	; Executa a subrotina MEMCOPY
+003e c03e		;	FIMDEMAIN		HM		FIMDEMAIN   	; Fim do programa	 
 
 
 ;Variáveis da subrotina
-0040 0000		;	SNWORDS 	K		/0000		; Número de palavras a serem copiadas (cópia da subrotina)
-0042 0000		;	SENDORIGEM	K		/0000		; Endereço inicial da sequência de origem (cópia da subrotina)
-0044 0000		;	SENDDESTINO	K		/0000		; Endereço inicial da sequência de destino (cópia da subrotina)
-0046 0000		;	SORIATUAL	K		/0000		; Endereço atual que eu estou lendo	
-0048 0000		;	SDESATUAL	K		/0000		; Endereço atual para onde estou copiando
-004a 0000		;	CONTAGEM	K		/0000		; Número de palavras que ainda preciso copiar
-004c 0000		;	OK			K		/0000		; Código de retorno de funcionamento correto
-004e ffff		;	ERRO 		K		/FFFF		; Código de retorno de caso de erro 
-0050 9000		;	MMVAZIA		MM      /0000       ; Código com MM vazia
-0052 8000		;	LDVAZIA		LD    	/0000		; Código com LD vazia
-0054 0000		;	COPIANDO 	K		/0000		; Dado que está sendo copiado
-0056 0002		;	INCADDRESS	K		/0002		; Constante de incremento de endereço
-0058 0001		;	DECCONT		K 		/0001		; Constante de decremento de contagem
-
+0040 0000		;	SNWORDS 		K		/0000			; Número de palavras a serem copiadas (cópia da subrotina)
+0042 0000		;	SENDORIGEM		K		/0000			; Endereço inicial da sequência de origem (cópia da subrotina)
+0044 0000		;	SENDDESTINO		K		/0000			; Endereço inicial da sequência de destino (cópia da subrotina)
+0046 0000		;	SORIATUAL		K		/0000			; Endereço atual que eu estou lendo	
+0048 0000		;	SDESATUAL		K		/0000			; Endereço atual para onde estou copiando
+004a 0000		;	CONTAGEM		K		/0000			; Número de palavras que ainda preciso copiar
+004c 0000		;	OK				K		/0000			; Código de retorno de funcionamento correto
+004e ffff		;	ERRO 			K		/FFFF			; Código de retorno de caso de erro 
+0050 9000		;	MMVAZIA			MM      /0000       	; Código com MM vazia
+0052 8000		;	LDVAZIA			LD    	/0000			; Código com LD vazia
+0054 0000		;	COPIANDO 		K		/0000			; Dado que está sendo copiado
+0056 0002		;	INCADDRESS		K		/0002			; Constante de incremento de endereço
+0058 0001		;	DECCONT			K 		/0001			; Constante de decremento de contagem
+005a 0000		;	RETORNO			K		/0000			; Retorno da subrotina
+005c 1000		;	INVALID_ADDR	K		/1000       	; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
 ;Corpo da Subrotina
-005a 0000		;	MEMCOPY		K 		/0000		; Início da subrotina MEMCOPY (endereço reservado para retorno)
-			;Inicio colocando os valores iniciais das variáveis de controle
-005c 8042		;				LD      SENDORIGEM  ; Copio o endereço de origem para o Acumulador
-005e 9046		;				MM 		SORIATUAL   ; Copio o endereço de origem para endereço que estou lendo
-0060 8044		;				LD      SENDDESTINO ; Copio o endereço de destino para o Acumulador
-0062 9048		;				MM 		SDESATUAL   ; Copio o endereço de destino para endereço que estou lendo
-0064 8040		;				LD      SNWORDS     ; Copio o número de palavras para o Acumulador
-0066 904a		;				MM 		CONTAGEM    ; Copio o número de palavras para CONTAGEM
-			; Loop de copias
-0068 1092		;	LOOP 		JZ		FIMMEMCOPY  ; Pula para fora do LOOP se CONTAGEM = 0
-006a 8046		;				LD 		SORIATUAL   ; Copio o endereço atual a ser lido para o Acumulador
-006c 4052		;				+		LDVAZIA     ; Somo o endeço atual a ser lido com a instrução de LOAD, obtendo uma instrução que lê o valor atual
-006e 9070		;				MM		COPIAATUAL 	; Envio a instrução que lê o valor atual para COPIAATUAL
-0070 0000		;	COPIAATUAL	K 		/0000		; Executa instrução que lê o valor atual
-0072 9054		;				MM 		COPIANDO    ; Copia o valor atual para COPIANDO
-0074 8048		;				LD 		SDESATUAL   ; Copio o endereço atual de destino para o Acumulador
-0076 4050		;				+		MMVAZIA     ; Somo o endereço atual de destino com a instrução de MM, obtendo uma instrução que envia para o destino atual
-0078 907c		;				MM		ENVIAATUAL 	; Envio a instrução que envia para o destino atual para ENVIAATUAL
-007a 8054		;				LD 		COPIANDO    ; Copio o valor atual para o Acumulador
-007c 0000		;	ENVIAATUAL	K 		/0000		; Executa instrução que envia para o destino atual
-			;Incrementando os endereços e decrementando a CONTAGEM
-007e 8046		;				LD 		SORIATUAL   
-0080 4056		;				+ 		INCADDRESS
-0082 9046		;				MM      SORIATUAL
-0084 8048		;				LD 		SDESATUAL   
-0086 4056		;				+ 		INCADDRESS
-0088 9048		;				MM      SDESATUAL
-008a 804a		;				LD 		CONTAGEM
-008c 5058		;				- 		DECCONT
-008e 904a		;				MM 		CONTAGEM
-0090 0068		;				JP		LOOP 		; Retorna ao Inicio do LOOP 
-0092 804c		;	FIMMEMCOPY	LD 		OK			; Coloco o código de OK no Acumulador
-0094 b05a		;				RS 		MEMCOPY		; Retorno da subrotina
+005e 0000		;	MEMCOPY			K 		/0000			; Início da subrotina MEMCOPY (endereço reservado para retorno)
+				; Tratando erros
+0060 8042		;	MC_ERRO_CHK_1	LD      SENDORIGEM  	; Copio o endereço de origem para o Acumulador
+0062 505c		;					-		INVALID_ADDR	; Subtraio o endereço pelo primeiro endereço inválido 
+0064 206a		;					JN		MC_ERRO_CHK_2	; Se for negativo, o endereço é válido e pula para o segundo check
+0066 804e		;	MC_ERRO_1		LD 		ERRO            ; Se entrou aqui, o endereço é inválido. Copio o código de erro no Acumulador.
+0068 905a		;					MM 		RETORNO 		; Copio o código de erro em RETORNO
+006a 8044		;	MC_ERRO_CHK_2	LD      SENDDESTINO  	; Copio o endereço de origem para o Acumulador
+006c 505c		;					-		INVALID_ADDR	; Subtraio o endereço pelo primeiro endereço inválido 
+006e 2074		;					JN		ERRO_CHK_FIM	; Se for negativo, o endereço é válido
+0070 804e		;	MC_ERRO_2		LD 		ERRO            ; Se entrou aqui, o endereço é inválido. Copio o código de erro no Acumulador.
+0072 905a		;					MM 		RETORNO 		; Copio o código de erro em RETORNO
+0074 805a		;	ERRO_CHK_FIM	LD 		RETORNO         ; Carrego RETORNO no Acumulador
+0076 107a		;					JZ		INICIOMEMCP		; Se retorno = 0, continuo, senão pulo pro final
+0078 00b0		;					JP		FIMMEMCOPY		
+
+				; Inicio colocando os valores iniciais das variáveis de controle
+007a 8042		;	INICIOMEMCP		LD      SENDORIGEM  	; Copio o endereço de origem para o Acumulador
+007c 9046		;					MM 		SORIATUAL   	; Copio o endereço de origem para endereço que estou lendo
+007e 8044		;					LD      SENDDESTINO 	; Copio o endereço de destino para o Acumulador
+0080 9048		;					MM 		SDESATUAL   	; Copio o endereço de destino para endereço que estou lendo
+				;Inicia contagem	
+0082 8040		;					LD      SNWORDS     	; Copio o número de palavras para o Acumulador
+0084 904a		;					MM 		CONTAGEM    	; Copio o número de palavras para CONTAGEM
+				; Loop de copias	
+0086 10b0		;	LOOP 			JZ		FIMMEMCOPY  	; Pula para fora do LOOP se CONTAGEM = 0
+0088 8046		;					LD 		SORIATUAL   	; Copio o endereço atual a ser lido para o Acumulador
+008a 4052		;					+		LDVAZIA     	; Somo o endeço atual a ser lido com a instrução de LOAD, obtendo uma instrução que lê o valor atual
+008c 908e		;					MM		COPIAATUAL 		; Envio a instrução que lê o valor atual para COPIAATUAL
+008e 0000		;	COPIAATUAL		K 		/0000			; Executa instrução que lê o valor atual
+0090 9054		;					MM 		COPIANDO    	; Copia o valor atual para COPIANDO
+0092 8048		;					LD 		SDESATUAL   	; Copio o endereço atual de destino para o Acumulador
+0094 4050		;					+		MMVAZIA     	; Somo o endereço atual de destino com a instrução de MM, obtendo uma instrução que envia para o destino atual
+0096 909a		;					MM		ENVIAATUAL 		; Envio a instrução que envia para o destino atual para ENVIAATUAL
+0098 8054		;					LD 		COPIANDO    	; Copio o valor atual para o Acumulador
+009a 0000		;	ENVIAATUAL		K 		/0000			; Executa instrução que envia para o destino atual
+				;Incrementando os endereços e decrementando a CONTAGEM
+009c 8046		;					LD 		SORIATUAL   
+009e 4056		;					+ 		INCADDRESS
+00a0 9046		;					MM      SORIATUAL
+00a2 8048		;					LD 		SDESATUAL   
+00a4 4056		;					+ 		INCADDRESS
+00a6 9048		;					MM      SDESATUAL
+00a8 804a		;					LD 		CONTAGEM
+00aa 5058		;					- 		DECCONT
+00ac 904a		;					MM 		CONTAGEM
+00ae 0086		;					JP		LOOP 			; Retorna ao Inicio do LOOP 
+00b0 805a		;	FIMMEMCOPY		LD 		RETORNO			; Coloco o valor de RETORNO no Acumulador
+00b2 b05e		;					RS 		MEMCOPY			; Retorno da subrotina
