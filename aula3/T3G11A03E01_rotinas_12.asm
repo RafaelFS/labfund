@@ -2,22 +2,31 @@
 ; Arquivo que contém as rotinas desenvolvidas nas aulas anteriores
 			&       /0000
 ;Exportando PACK  ==================================================================
-PACK        >                   ; Sub-rotina PACK
-PACK_VAR1   >                   ; Endereço da primeira palavra a ser empacotada
-PACK_VAR2   >                   ; Endereço da segunda palabra a ser empacotada
+PACK        		>           ; Sub-rotina PACK
+PACK_VAR1   		>           ; Endereço da primeira palavra a ser empacotada
+PACK_VAR2   		>           ; Endereço da segunda palabra a ser empacotada
 
+;Exportando UNPACK  =======================================================================
+UNPACK_OUT_ADDR1  	>	     	; Endereço de saída da primeira palavra 
+UNPACK_OUT_ADDR2 	>       	; Endereço de saída da segunda palavra 
+UNPACK_PACKAGE     	>         	; Word empacotada
+
+;Exportando MEMCOPY =======================================================================
+MEMCOPY_NWORDS 		> 			; Número de palavras a serem copiadas (cópia da subrotina)
+MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da subrotina)
+MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)
 
 ;Importando constantes ===========================================================
-SHIFT2	    <                   ; Constante que desloca em 2 posições os bits das palavras
-LDVAZIA     <                   ; Instrução
-TRATANEG	>
-VOLTANEG 	>
-MM_VAZIA	>
-LD_VAZIA	>
-INC_ADDRESS >
-INCREASE	>
-
-
+SHIFT2	    		<           ; Constante que desloca em 2 posições os bits das palavras
+LDVAZIA     		<           ; Instrução
+TRATANEG			<
+VOLTANEG 			<
+MM_VAZIA			<
+LD_VAZIA			<
+INC_ADDRESS 		<
+INCREASE			<
+INVALID_ADDR		<	
+	
 ; Subrotina PACK ===============================================================================
 ; Recebe o endereço de duas palavras e retorna no Acumulador a composição entre as duas
 
@@ -96,58 +105,72 @@ UNPACK_SALVA3      	K       /0000       			; Executa a instrução MM <valor con
 					LD      UNPACK_W2          		; Copia o valor de W2 para o Acumulador
 UNPACK_SALVA4      	K       /0000       			; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 UNPACK_FIM	 		RS      UNPACK      			; Retorno da subrotina
-					#       INI		
-		
 
 
+; Subrotina MEMCOPY =============================================================================
+; Subrotina que copia uma sequência de tamanho arbitrário de bytes da 
+; memória de uma posição em outra. Retorna 0000 no Acumulador em caso de 
+; sucesso e FFFF em caso de erro
 
-;Variáveis da subrotina
-SNWORDS     K       /0000       ; Número de palavras a serem copiadas (cópia da subrotina)
-SENDORIGEM  K       /0000       ; Endereço inicial da sequência de origem (cópia da subrotina)
-SENDDESTINO K       /0000       ; Endereço inicial da sequência de destino (cópia da subrotina)
-SORIATUAL   K       /0000       ; Endereço atual que eu estou lendo 
-SDESATUAL   K       /0000       ; Endereço atual para onde estou copiando
-CONTAGEM    K       /0000       ; Número de palavras que ainda preciso copiar
-OK          K       /0000       ; Código de retorno de funcionamento correto
-ERRO        K       /FFFF       ; Código de retorno de caso de erro 
-MMVAZIA     MM      /0000       ; Código com MM vazia
-LDVAZIA     LD      /0000       ; Código com LD vazia
-COPIANDO    K       /0000       ; Dado que está sendo copiado
-INCADDRESS  K       /0002       ; Constante de incremento de endereço
-DECCONT     K       /0001       ; Constante de decremento de contagem
+;Variáveis da Subrotina
+MEMCOPY_NWORDS 				K		/0000					; Número de palavras a serem copiadas (cópia da subrotina)
+MEMCOPY_END_ORIGEM			K		/0000					; Endereço inicial da sequência de origem (cópia da subrotina)
+MEMCOPY_END_DESTINO			K		/0000					; Endereço inicial da sequência de destino (cópia da subrotina)
+MEMCOPY_ORIGEM_ATUAL		K		/0000					; Endereço atual que eu estou lendo	
+MEMCOPY_DESTINO_ATUAL		K		/0000					; Endereço atual para onde estou copiando
+MEMCOPY_CONTAGEM			K		/0000					; Número de palavras que ainda preciso copiar
+MEMCOPY_OK					K		/0000					; Código de retorno de funcionamento correto
+MEMCOPY_ERRO 				K		/FFFF					; Código de retorno de caso de erro 
+MEMCOPY_COPIANDO 			K		/0000					; Dado que está sendo copiado
+MEMCOPY_RETORNO				K		/0000					; Retorno da subrotina
 
 ;Corpo da Subrotina
-MEMCOPY     K       /0000       ; Início da subrotina MEMCOPY (endereço reservado para retorno)
-			;Inicio colocando os valores iniciais das variáveis de controle
-			LD      SENDORIGEM  ; Copio o endereço de origem para o Acumulador
-			MM      SORIATUAL   ; Copio o endereço de origem para endereço que estou lendo
-			LD      SENDDESTINO ; Copio o endereço de destino para o Acumulador
-			MM      SDESATUAL   ; Copio o endereço de destino para endereço que estou lendo
-			LD      SNWORDS     ; Copio o número de palavras para o Acumulador
-			MM      CONTAGEM    ; Copio o número de palavras para CONTAGEM
-			; Loop de copias
-LOOP        JZ      FIMMEMCOPY  ; Pula para fora do LOOP se CONTAGEM = 0
-			LD      SORIATUAL   ; Copio o endereço atual a ser lido para o Acumulador
-			+       LDVAZIA     ; Somo o endeço atual a ser lido com a instrução de LOAD, obtendo uma instrução que lê o valor atual
-			MM      COPIAATUAL  ; Envio a instrução que lê o valor atual para COPIAATUAL
-COPIAATUAL  K       /0000       ; Executa instrução que lê o valor atual
-			MM      COPIANDO    ; Copia o valor atual para COPIANDO
-			LD      SDESATUAL   ; Copio o endereço atual de destino para o Acumulador
-			+       MMVAZIA     ; Somo o endereço atual de destino com a instrução de MM, obtendo uma instrução que envia para o destino atual
-			MM      ENVIAATUAL  ; Envio a instrução que envia para o destino atual para ENVIAATUAL
-			LD      COPIANDO    ; Copio o valor atual para o Acumulador
-ENVIAATUAL  K       /0000       ; Executa instrução que envia para o destino atual
-			;Incrementando os endereços e decrementando a CONTAGEM
-			LD      SORIATUAL   
-			+       INCADDRESS
-			MM      SORIATUAL
-			LD      SDESATUAL   
-			+       INCADDRESS
-			MM      SDESATUAL
-			LD      CONTAGEM
-			-       DECCONT
-			MM      CONTAGEM
-			JP      LOOP        ; Retorna ao Inicio do LOOP 
-FIMMEMCOPY  LD      OK          ; Coloco o código de OK no Acumulador
-			RS      MEMCOPY     ; Retorno da subrotina
-			#       INI
+MEMCOPY						K 		/0000					; Início da subrotina MEMCOPY (endereço reservado para retorno)
+							; Tratando erros	
+MEMCOPY_ERRO_CHK_1			LD      MEMCOPY_END_ORIGEM 		; Copio o endereço de origem para o Acumulador
+							-		INVALID_ADDR			; Subtraio o endereço pelo primeiro endereço inválido 
+							JN		MEMCOPY_ERRO_CHK_2		; Se for negativo, o endereço é válido e pula para o segundo check
+MEMCOPY_ERRO_1_DETECTADO	LD 		MEMCOPY_ERRO            ; Se entrou aqui, o endereço é inválido. Copio o código de erro no Acumulador.
+							MM 		MEMCOPY_RETORNO 		; Copio o código de erro em RETORNO
+MEMCOPY_ERRO_CHK_2			LD      MEMCOPY_END_DESTINO  	; Copio o endereço de origem para o Acumulador
+							-		INVALID_ADDR			; Subtraio o endereço pelo primeiro endereço inválido 
+							JN		MEMCOPY_ERRO_CHK_FIM	; Se for negativo, o endereço é válido
+MEMCOPY_ERRO_2_DETECTADO	LD 		MEMCOPY_ERRO            ; Se entrou aqui, o endereço é inválido. Copio o código de erro no Acumulador.
+							MM 		MEMCOPY_RETORNO 		; Copio o código de erro em RETORNO
+MEMCOPY_ERRO_CHK_FIM		LD 		MEMCOPY_RETORNO         ; Carrego RETORNO no Acumulador
+							JZ		MEMCOPY_INICIO			; Se retorno = 0, continuo, senão pulo pro final
+							JP		MEMCOPY_FIM		
+							; Inicio colocando os valores iniciais das variáveis de controle
+MEMCOPY_INICIO				LD      MEMCOPY_END_ORIGEM  	; Copio o endereço de origem para o Acumulador
+							MM 		MEMCOPY_ORIGEM_ATUAL   	; Copio o endereço de origem para endereço que estou lendo
+							LD      MEMCOPY_END_DESTINO 	; Copio o endereço de destino para o Acumulador
+							MM 		MEMCOPY_DESTINO_ATUAL   ; Copio o endereço de destino para endereço que estou lendo
+							;Inicia contagem			
+							LD      MEMCOPY_NWORDS     		; Copio o número de palavras para o Acumulador
+							MM 		MEMCOPY_CONTAGEM    	; Copio o número de palavras para CONTAGEM
+							; Loop de copias			
+MEMCOPY_LOOP 				JZ		MEMCOPY_FIM  			; Pula para fora do LOOP se CONTAGEM = 0
+							LD 		MEMCOPY_ORIGEM_ATUAL   	; Copio o endereço atual a ser lido para o Acumulador
+							+		LD_VAZIA     			; Somo o endeço atual a ser lido com a instrução de LOAD, obtendo uma instrução que lê o valor atual
+							MM		MEMCOPY_COPIA_ATUAL 	; Envio a instrução que lê o valor atual para COPIAATUAL
+MEMCOPY_COPIA_ATUAL			K 		/0000					; Executa instrução que lê o valor atual
+							MM 		MEMCOPY_COPIANDO    	; Copia o valor atual para COPIANDO
+							LD 		MEMCOPY_DESTINO_ATUAL   ; Copio o endereço atual de destino para o Acumulador
+							+		MM_VAZIA     			; Somo o endereço atual de destino com a instrução de MM, obtendo uma instrução que envia para o destino atual
+							MM		MEMCOPY_ENVIA_ATUAL 	; Envio a instrução que envia para o destino atual para ENVIAATUAL
+							LD 		MEMCOPY_COPIANDO    	; Copio o valor atual para o Acumulador
+MEMCOPY_ENVIA_ATUAL			K 		/0000					; Executa instrução que envia para o destino atual
+							;Incrementando os endereços e decrementando a CONTAGEM
+							LD 		MEMCOPY_ORIGEM_ATUAL 	; Incremento o endereço de origem para pegar o próximo valor a ser copiado  
+							+ 		INC_ADDRESS
+							MM      MEMCOPY_ORIGEM_ATUAL 
+							LD 		MEMCOPY_DESTINO_ATUAL   ; Incremento o endeço de destino para que a cópia ocupa a próxima posição da sequencia
+							+ 		INC_ADDRESS
+							MM      MEMCOPY_DESTINO_ATUAL
+							LD 		MEMCOPY_CONTAGEM		; Decremento a contagem de palavras que faltam copiar
+							- 		INCREASE 				
+							MM 		MEMCOPY_CONTAGEM
+							JP		MEMCOPY_LOOP 			; Retorna ao Inicio do LOOP 
+MEMCOPY_FIM					LD 		MEMCOPY_RETORNO			; Coloco o valor de RETORNO no Acumulador
+							RS 		MEMCOPY					; Retorno da subrotina
+							#		INI					
