@@ -18,3 +18,4 @@ LD_VAZIA    	LD 		/0000		; Load vazia para criação de intruções dinamicament
 INC_ADDRESS		K		/0002		; Constante de incremento de endereço
 INCREASE		K 		/0001		; Constante de decremento de contagem
 INVALID_ADDR	K		/1000       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+				# 		SHIFT2      ; Pseudo-código de fim de arquivo

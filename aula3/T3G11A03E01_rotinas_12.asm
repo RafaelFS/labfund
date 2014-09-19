@@ -1,6 +1,6 @@
 ; T3G11A03E01_rotinas_12.asm
 ; Arquivo que contém as rotinas desenvolvidas nas aulas anteriores
-			&       /0000
+					&       /0000
 ;Exportando PACK  ==================================================================
 PACK        		>           ; Sub-rotina PACK
 PACK_VAR1   		>           ; Endereço da primeira palavra a ser empacotada
@@ -18,9 +18,9 @@ MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da 
 
 ;Importando constantes ===========================================================
 SHIFT2	    		<           ; Constante que desloca em 2 posições os bits das palavras
-LDVAZIA     		<           ; Instrução
-TRATANEG			<
-VOLTANEG 			<
+LD_VAZIA     		<           ; Instrução
+TRATA_NEG			<
+VOLTA_NEG 			<
 MM_VAZIA			<
 LD_VAZIA			<
 INC_ADDRESS 		<
@@ -36,7 +36,7 @@ PACK_VAR2   K /0000     ; Variavel do programa
 ; Corpo de PACK
 PACK        K /0000             ; Sub-rotina PACK
 			LD      PACK_VAR1   ; Recebe o endereco de IN1 (conteudo de PACK_VAR1)
-			+       LDVAZIA     ; Soma com (8000H)
+			+       LD_VAZIA     ; Soma com (8000H)
 			MM      PACK_X      ; Salva no proximo endereco de memoria
 PACK_X      K       /0000       ; Executa a instrucao recem-montada
 			*       SHIFT2      ; Multiplica por 100H
@@ -173,4 +173,4 @@ MEMCOPY_ENVIA_ATUAL			K 		/0000					; Executa instrução que envia para o desti
 							JP		MEMCOPY_LOOP 			; Retorna ao Inicio do LOOP 
 MEMCOPY_FIM					LD 		MEMCOPY_RETORNO			; Coloco o valor de RETORNO no Acumulador
 							RS 		MEMCOPY					; Retorno da subrotina
-							#		INI					
+							#		PACK				
