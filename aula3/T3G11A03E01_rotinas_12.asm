@@ -7,11 +7,13 @@ PACK_VAR1   		>           ; Endereço da primeira palavra a ser empacotada
 PACK_VAR2   		>           ; Endereço da segunda palabra a ser empacotada
 
 ;Exportando UNPACK  =======================================================================
+UNPACK				>			; Sub-rotina UNPACK
 UNPACK_OUT_ADDR1  	>	     	; Endereço de saída da primeira palavra 
 UNPACK_OUT_ADDR2 	>       	; Endereço de saída da segunda palavra 
 UNPACK_PACKAGE     	>         	; Word empacotada
 
 ;Exportando MEMCOPY =======================================================================
+MEMCOPY 			>			; Subrotina MEMCOPY
 MEMCOPY_NWORDS 		> 			; Número de palavras a serem copiadas (cópia da subrotina)
 MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da subrotina)
 MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)

@@ -7,11 +7,13 @@
 2002 0000 ; "PACK_VAR2>"		;	PACK_VAR2   		>           ; Endereço da segunda palabra a ser empacotada
 
 ;Exportando UNPACK  =======================================================================
+202a 0000 ; "UNPACK>"		;	UNPACK				>			; Sub-rotina UNPACK
 201e 0000 ; "UNPACK_OUT_ADDR1>"		;	UNPACK_OUT_ADDR1  	>	     	; Endereço de saída da primeira palavra 
 2020 0000 ; "UNPACK_OUT_ADDR2>"		;	UNPACK_OUT_ADDR2 	>       	; Endereço de saída da segunda palavra 
 2022 0000 ; "UNPACK_PACKAGE>"		;	UNPACK_PACKAGE     	>         	; Word empacotada
 
 ;Exportando MEMCOPY =======================================================================
+2094 0000 ; "MEMCOPY>"		;	MEMCOPY 			>			; Subrotina MEMCOPY
 2080 0000 ; "MEMCOPY_NWORDS>"		;	MEMCOPY_NWORDS 		> 			; Número de palavras a serem copiadas (cópia da subrotina)
 2082 0000 ; "MEMCOPY_END_ORIGEM>"		;	MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da subrotina)
 2084 0000 ; "MEMCOPY_END_DESTINO>"		;	MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)
