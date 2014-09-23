@@ -22,6 +22,8 @@ MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da 
 ITOCH 				>
 ITOCH_END_SAIDA_1	>
 ITOCH_END_SAIDA_2	>
+ITOCH_ENTRADA       >
+
 
 ;Importando constantes ===========================================================
 SHIFT1				<		; Constante que desloca em 1 posição os bits das palavras
@@ -33,6 +35,9 @@ LD_VAZIA    		<		; Load vazia para criação de intruções dinamicamente
 INC_ADDRESS			<		; Constante de incremento de endereço
 INCREASE			<		; Constante de decremento de contagem
 INVALID_ADDR		<       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+CHECK_DIGITO		<		; Constante utilizada para checar se é digito (se você subtrair e for positivo, é letra)
+DIGITO_TO_HEX		< 		; Constante que, somada com um digito, dá o seu código ASCII
+LETRA_TO_HEX		<		; Constante que, somada com uma letra, dá o seu código ASCII
 	
 ; Subrotina PACK ===============================================================================
 ; Recebe o endereço de duas palavras e retorna no Acumulador a composição entre as duas
@@ -198,6 +203,11 @@ ITOCH_DIG_3					K		/0000
 ITOCH_DIG_4					K 		/0000
 ITOCH_CONTADOR_CHEIO		K 		/0004 ; Valor máximo de contador
 ITOCH_CONTADOR_ATUAL        K		/0000 ; Valor atual do contador
+ITOCH_END_LOOP_ATUAL		K 		/0000
+ITOCH_LOOP_VALOR_ATUAL      K       /0000
+ITOCH_LOOP_COD_ATUAL		K 		/0000
+ITOCH_VALOR_SAIDA_1 		K 		/0000
+ITOCH_VALOR_SAIDA_2 		K 		/0000
 ;Corpo da Subrotina
 ITOCH						K 		/0000					; Início da subrotina ITOCH (endereço reservado para retorno)
 							MM 		ITOCH_ENTRADA 			; Copia a entrada presente no Acumulador para a posição ITOCH_ENTRADA
@@ -205,7 +215,7 @@ ITOCH_SEPARANDO_PALAVRAS	LV		ITOCH_WORD_1 			; Coloca o endereço de ITOCH_WORD_
 							MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
 							LV		ITOCH_WORD_2 			; Coloca o endereço de ITOCH_WORD_2 no Acumulador
 							MM 		UNPACK_OUT_ADDR2		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR2
-							LD		ITOCH_ENTRADA 			; Copia o conteúdo de ITOCHI_ENTRADA para o Acumulador
+							LD		ITOCH_ENTRADA 			; Copia o conteúdo de ITOCH_ENTRADA para o Acumulador
 							SC  	UNPACK      			; Executa a subrotina UNPACK para separar as duas palavras						
 ITOCH_SEPARA_DIGITOS_1_E_2	LV		ITOCH_DIG_1 			; Coloca o endereço de ITOCH_DIG_1 no Acumulador
 							MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
@@ -225,7 +235,57 @@ ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG
 							SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
 							LD 		ITOCH_DIG_4             ; Carrego o ultimo digito para corrigir a posição 
 							/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
-ITOCH_PREPARA_LOOP
-ITOCH_CONVERSAO				
+ITOCH_PREPARA_LOOP			LD 		ITOCH_CONTADOR_CHEIO	
+							MM 		ITOCH_CONTADOR_ATUAL
+							LV 		ITOCH_DIG_1
+							MM 		ITOCH_END_LOOP_ATUAL	; Guardo o valor do endereço do primeiro digito em ITOCH_END_LOOP_ATUAL						
+ITOCH_CONVERSAO_LOOP		LD 		ITOCH_END_LOOP_ATUAL 	; Salvo o valor do endereço a ser lido
+							+		LD_VAZIA				; Combino com LOAD
+							MM		ITOCH_OBTER_VALOR_ATUAL	; Mando a instrução combinada para a proxima linha				
+ITOCH_OBTER_VALOR_ATUAL		K		/0000					; Leio o valor atual
+							MM 		ITOCH_LOOP_VALOR_ATUAL	; Guardo o valor atual em ITOCH_LOOP_VALOR_ATUAL							
+							-		CHECK_DIGITO			; Se subtrair CHECK_DIGITO e for negativo...
+							JN		ITOCH_EH_NUMERO			; ...pulo para caso Numero
+ITOCH_EH_LETRA				LD 		ITOCH_LOOP_VALOR_ATUAL	; Se estou aqui é Letra e obtenho o valor atual
+							+ 		LETRA_TO_HEX			; Transformo no código ASCII
+							JP		ITOCH_FIM_DE_LOOP 		; Com o código no acumulador, vou para o fim do loop
+ITOCH_EH_NUMERO             LD 		ITOCH_LOOP_VALOR_ATUAL	; Se é número, obtenho o valor atual
+							+ 		DIGITO_TO_HEX 			; Transformo no código atual
+ITOCH_FIM_DE_LOOP			MM 		ITOCH_LOOP_COD_ATUAL	; Salvo o código atual na memória
+							LD 		ITOCH_END_LOOP_ATUAL 	; Pego o valor do endereço atual sendo manipulado
+							+		MM_VAZIA				; Combino com MM
+							MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha
+ITOCH_SALVA_RESULTADO		K 		0000					; Salvo o resultado da iteração no endereço correspondentes
+ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL
+							+ 		INC_ADDRESS
+							MM 		ITOCH_END_LOOP_ATUAL
+							LD 		ITOCH_CONTADOR_ATUAL
+							- 		INCREASE
+							JZ		ITOCH_FIM_DO_LOOP
+							JP		ITOCH_CONVERSAO_LOOP
+ITOCH_FIM_DO_LOOP			LV 		ITOCH_DIG_1			; Recebe o endereco de memoria de ITOCH_DIG_1	
+							MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
+							LV 	 	ITOCH_DIG_2 		; Recebe o endereco de memoria de ITOCH_DIG_2
+							MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
+							SC 		PACK 				; Chama a sub-rotina PACK
+							MM 		ITOCH_VALOR_SAIDA_1	; Salva o resultado em ITOCH_VALOR_SAIDA_1
+							LV 		ITOCH_DIG_3			; Recebe o endereco de memoria de ITOCH_DIG_3	
+							MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
+							LV 	 	ITOCH_DIG_4 		; Recebe o endereco de memoria de ITOCH_DIG_4
+							MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
+							SC 		PACK 				; Chama a sub-rotina PACK
+							MM 		ITOCH_VALOR_SAIDA_2	; Salva o resultado em ITOCH_VALOR_SAIDA_2
+							LD 		ITOCH_END_SAIDA_1 	; Pego o primeiro endereço de saída
+							+ 		MM_VAZIA 			; Combina com a instrução MM
+							MM 		ITOCH_SALVA_SAIDA_1	; Salva a instrução montada
+							LD      ITOCH_VALOR_SAIDA_1 ; Pego o valor da primeira saída
+ITOCH_SALVA_SAIDA_1			K 		/0000				; Executa instrução montada para salvar a primeira saída
+
 							#		PACK				
+							LD 		ITOCH_END_SAIDA_2 	; Pego o primeiro endereço de saída
+							+ 		MM_VAZIA 			; Combina com a instrução MM
+							MM 		ITOCH_SALVA_SAIDA_2	; Salva a instrução montada
+							LD      ITOCH_VALOR_SAIDA_2 ; Pego o valor da primeira saída
+ITOCH_SALVA_SAIDA_2			K 		/0000				; Executa instrução montada para salvar a primeira saída
+ITOCH_FIM_DA_SUBROTINA		#		PACK				
 
