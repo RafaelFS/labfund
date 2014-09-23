@@ -16,15 +16,15 @@ MEMCOPY_END_ORIGEM	<			; Endereço inicial da sequência de origem (cópia da su
 MEMCOPY_END_DESTINO	<			; Endereço inicial da sequência de destino (cópia da subrotina)
 
 ;Importando constantes ===========================================================
-SHIFT1				<			; Constante que desloca em 1 posição os bits das palavras
-SHIFT2				<			; Constante que desloca em 2 posições os bits das palavras
-TRATA_NEG			<			; Constante utilizada para passar um numero negativo para um positivo
-VOLTA_NEG			<			; Constante utilizada para voltar o número para negativo
-MM_VAZIA			<			; Move to memory vazia para criação de instrução dinamicamente
-LD_VAZIA    		<			; Load vazia para criação de intruções dinamicamente
-INC_ADDRESS			<			; Constante de incremento de endereço
-INCREASE			<			; Constante de decremento de contagem
-INVALID_ADDR		<       	; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido	
+SHIFT2	    		<           ; Constante que desloca em 2 posições os bits das palavras
+LD_VAZIA     		<           ; Instrução
+TRATA_NEG			<
+VOLTA_NEG 			<
+MM_VAZIA			<
+LD_VAZIA			<
+INC_ADDRESS 		<
+INCREASE			<
+INVALID_ADDR		<	
 
 						& 		/0000				; Inicio do programa em 0000
 INI						JP 		MAIN_PACK			; Pula para a label MAIN_PACK
@@ -53,7 +53,7 @@ MAIN_PACK				LV 		ENTRADA_PACK_1		; Recebe o endereco de memoria de ENTRADA_PACK
 						MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
 						SC 		PACK 				; Chama a sub-rotina PACK
 						MM 		SAIDA_PACK			; Salva o resultado na saida (SAIDA_PACK)
-; Corpo do teste de funcionamento de PACK
+; Corpo do teste de funcionamento de UNPACK
 MAIN_UNPACK				LV		SAIDA_UNPACK_1 		; Coloca o endereço de SAIDA_UNPACK_1 no Acumulador
 						MM 		UNPACK_OUT_ADDR1	; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
 						LV		SAIDA_UNPACK_2 		; Coloca o endereço de SAIDA_UNPACK_2 no Acumulador
