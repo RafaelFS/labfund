@@ -226,6 +226,7 @@ ITOCH_SEPARA_DIGITOS_1_E_2	LV		ITOCH_DIG_1 			; Coloca o endereço de ITOCH_DIG_
 							SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
 							LD 		ITOCH_DIG_2             ; Carrego o segundo digito para corrigir a posição 
 							/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
+							MM 		ITOCH_DIG_2
 ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG_3 no Acumulador
 							MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
 							LV		ITOCH_DIG_4 			; Coloca o endereço de ITOCH_DIG_4 no Acumulador
@@ -235,6 +236,7 @@ ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG
 							SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
 							LD 		ITOCH_DIG_4             ; Carrego o ultimo digito para corrigir a posição 
 							/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
+							MM 		ITOCH_DIG_4
 ITOCH_PREPARA_LOOP			LD 		ITOCH_CONTADOR_CHEIO	
 							MM 		ITOCH_CONTADOR_ATUAL
 							LV 		ITOCH_DIG_1
@@ -255,12 +257,13 @@ ITOCH_FIM_DE_LOOP			MM 		ITOCH_LOOP_COD_ATUAL	; Salvo o código atual na memóri
 							LD 		ITOCH_END_LOOP_ATUAL 	; Pego o valor do endereço atual sendo manipulado
 							+		MM_VAZIA				; Combino com MM
 							MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha
-ITOCH_SALVA_RESULTADO		K 		0000					; Salvo o resultado da iteração no endereço correspondentes
+ITOCH_SALVA_RESULTADO		K 		/0000					; Salvo o resultado da iteração no endereço correspondentes
 ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL
 							+ 		INC_ADDRESS
 							MM 		ITOCH_END_LOOP_ATUAL
 							LD 		ITOCH_CONTADOR_ATUAL
 							- 		INCREASE
+							MM      ITOCH_CONTADOR_ATUAL
 							JZ		ITOCH_FIM_DO_LOOP
 							JP		ITOCH_CONVERSAO_LOOP
 ITOCH_FIM_DO_LOOP			LV 		ITOCH_DIG_1			; Recebe o endereco de memoria de ITOCH_DIG_1	
@@ -287,5 +290,6 @@ ITOCH_SALVA_SAIDA_1			K 		/0000				; Executa instrução montada para salvar a p
 							MM 		ITOCH_SALVA_SAIDA_2	; Salva a instrução montada
 							LD      ITOCH_VALOR_SAIDA_2 ; Pego o valor da primeira saída
 ITOCH_SALVA_SAIDA_2			K 		/0000				; Executa instrução montada para salvar a primeira saída
-ITOCH_FIM_DA_SUBROTINA		#		PACK				
+ITOCH_FIM_DA_SUBROTINA		RS 		ITOCH
+							#		PACK				
 
