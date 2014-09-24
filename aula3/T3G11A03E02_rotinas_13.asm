@@ -385,7 +385,11 @@ ITOCH_FIM_DE_LOOP			MM 		ITOCH_LOOP_COD_ATUAL	; Salvo o código atual na memóri
 							LD 		ITOCH_END_LOOP_ATUAL 	; Pego o valor do endereço atual sendo manipulado
 							+		MM_VAZIA				; Combino com MM
 							MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha							
+<<<<<<< HEAD
 							LD      ITOCH_LOOP_COD_ATUAL    ; Pego o resultado da iteração
+=======
+							LD      ITOCH_LOOP_COD_ATUAL    ;
+>>>>>>> 6c47af5a4a8b650535359f3d901b6fb90b841397
 ITOCH_SALVA_RESULTADO		K 		/0000					; Salvo o resultado da iteração no endereço correspondentes
 ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL	; Incremento o endereço a ser manipulado pelo loop 
 							+ 		INC_ADDRESS				; 
