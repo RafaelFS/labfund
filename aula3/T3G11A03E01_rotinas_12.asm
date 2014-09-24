@@ -19,15 +19,14 @@ MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da su
 MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)
 
 ;Importando constantes ===========================================================
-SHIFT2	    		<           ; Constante que desloca em 2 posições os bits das palavras
-LD_VAZIA     		<           ; Instrução
-TRATA_NEG			<
-VOLTA_NEG 			<
-MM_VAZIA			<
-LD_VAZIA			<
-INC_ADDRESS 		<
-INCREASE			<
-INVALID_ADDR		<	
+SHIFT2				<		; Constante que desloca em 2 posições os bits das palavras
+TRATA_NEG			<		; Constante utilizada para passar um numero negativo para um positivo
+VOLTA_NEG			<		; Constante utilizada para voltar o número para negativo
+MM_VAZIA			<		; Move to memory vazia para criação de instrução dinamicamente
+LD_VAZIA    		<		; Load vazia para criação de intruções dinamicamente
+INC_ADDRESS			<		; Constante de incremento de endereço
+INCREASE			<		; Constante de decremento de contagem
+INVALID_ADDR		<       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido			
 	
 ; Subrotina PACK ===============================================================================
 ; Recebe o endereço de duas palavras e retorna no Acumulador a composição entre as duas

@@ -1,4 +1,4 @@
-; T3G11A03E01_rotinas_12.asm
+; T3G11A03E02_rotinas_13.asm
 ; Arquivo que contém as rotinas desenvolvidas nas aulas anteriores
 					&       /0000
 ;Exportando PACK  ==================================================================
@@ -7,23 +7,33 @@ PACK_VAR1   		>           ; Endereço da primeira palavra a ser empacotada
 PACK_VAR2   		>           ; Endereço da segunda palabra a ser empacotada
 
 ;Exportando UNPACK  =======================================================================
-UNPACK				>			; Sub-rotina UNPACK
+UNPACK              >
 UNPACK_OUT_ADDR1  	>	     	; Endereço de saída da primeira palavra 
 UNPACK_OUT_ADDR2 	>       	; Endereço de saída da segunda palavra 
 UNPACK_PACKAGE     	>         	; Word empacotada
 
 ;Exportando MEMCOPY =======================================================================
-MEMCOPY 			>			; Subrotina MEMCOPY
+MEMCOPY             >
 MEMCOPY_NWORDS 		> 			; Número de palavras a serem copiadas (cópia da subrotina)
 MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da subrotina)
 MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)
 
+; Exportando CHTOI  =======================================================================
+CHTOI				>
+CHTOI_IN1		 	>           ; Endereço de entrada da primeira palavra
+CHTOI_IN2 			>       	; Endereço de entrada da segunda palavra
+CHTOI_WORD	     	>       	; Word final
+CHTOI_AUX 			>
+CHTOI_D 			>
+CHTOI_D1          	>       	; Digito 1 
+CHTOI_D2  	     	>       	; Digito 2 
+CHTOI_D3  	     	>       	; Digito 3 
+CHTOI_D4  	     	>       	; Digito 4 
+
 ;Exportando ITOCH ===============================================================================
 ITOCH 				>
-ITOCH_END_SAIDA_1	>
-ITOCH_END_SAIDA_2	>
-ITOCH_ENTRADA       >
-
+ITOCH_END_SAIDA_1	> 		; Endereço onde a saída 1 de ITOCH será armazenada
+ITOCH_END_SAIDA_2	>		; Endereço onde a saída 2 de ITOCH será armazenada
 
 ;Importando constantes ===========================================================
 SHIFT1				<		; Constante que desloca em 1 posição os bits das palavras
@@ -36,8 +46,16 @@ INC_ADDRESS			<		; Constante de incremento de endereço
 INCREASE			<		; Constante de decremento de contagem
 INVALID_ADDR		<       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
 CHECK_DIGITO		<		; Constante utilizada para checar se é digito (se você subtrair e for positivo, é letra)
-DIGITO_TO_HEX		< 		; Constante que, somada com um digito, dá o seu código ASCII
+DIGITO_TO_HEX		<		; Constante que, somada com um digito, dá o seu código ASCII
 LETRA_TO_HEX		<		; Constante que, somada com uma letra, dá o seu código ASCII
+; Constantes para a rotina CHTOI
+CH_1				<
+CH_2				<
+CH_3				<
+CH_4				<
+CH_5				<
+CH_6 				<
+CH_E				<
 	
 ; Subrotina PACK ===============================================================================
 ; Recebe o endereço de duas palavras e retorna no Acumulador a composição entre as duas
@@ -185,7 +203,117 @@ MEMCOPY_ENVIA_ATUAL			K 		/0000					; Executa instrução que envia para o desti
 							JP		MEMCOPY_LOOP 			; Retorna ao Inicio do LOOP 
 MEMCOPY_FIM					LD 		MEMCOPY_RETORNO			; Coloco o valor de RETORNO no Acumulador
 							RS 		MEMCOPY					; Retorno da subrotina
-							
+
+; Subrotina CHTOI  =============================================================================
+; Subrotina que converte duas words contendo caracteres ASCII hexadecimais para o numero inteiro
+; correspondente.
+
+; Variaveis de CHTOI
+CHTOI_IN1		 	K       /0000       	; Endereço de entrada da primeira palavra 
+CHTOI_IN2 			K       /0000       	; Endereço de entrada da segunda palavra
+CHTOI_WORD	     	K       /0000       	; Word final
+CHTOI_AUX 			K		/0000			; Variavel auxiliar (guarda o endereco das variavels CHTOI_DX)
+CHTOI_D 			K 		/0000			; Variavel auxiliar (guarda o valor a ser salvo)
+CHTOI_D1          	K       /0000       	; Digito 1 
+CHTOI_D2  	     	K       /0000       	; Digito 2 
+CHTOI_D3  	     	K       /0000       	; Digito 3 
+CHTOI_D4  	     	K       /0000       	; Digito 4 
+
+; Corpo da subrotina
+CHTOI 						K		/0000					; Inicio da subrotina CHTOI (endereco reservado para retorno)
+							LV 		CHTOI_D1 				; Guarda o endereco de CHTOI_D1 no Acumulador
+							MM      UNPACK_OUT_ADDR1		; a Primeira saida de UNPACK sera salva em CHTOI_D1
+							LV   	CHTOI_D2 				;
+							MM 		UNPACK_OUT_ADDR2 		; a Segunda saida de UNPACK sera salva em CHTOI_D2
+							LD 		CHTOI_IN1				; recebe o endereço da primeira palavra
+							+ 		LD_VAZIA				; Montagem de instrucao dinamica
+							MM 		WORD1					;
+WORD1 						K 		/0000					; Carrega o valor da primeira palavra no Acumulador
+							SC 		UNPACK 					; Execucao da subrotina UNPACK, para separar a palavra
+							LV 		CHTOI_D3 				; Repeticao do processo para a segunda palavra
+							MM      UNPACK_OUT_ADDR1
+							LV   	CHTOI_D4
+							MM 		UNPACK_OUT_ADDR2
+							LD 		CHTOI_IN2				;
+							+ 		LD_VAZIA
+							MM 		WORD2
+WORD2 						K 		/0000
+							SC 		UNPACK
+; Inicio das conversoes de hexa para inteiros
+CHTOI_DIG1					LV 		CHTOI_D1 				; Endereço de CHTOI_D1 para Acumulador
+							MM 		CHTOI_AUX 				; Salva o endereço de CHTOI_D1 em CHTOI_AUX
+							LD 		CHTOI_D1 				; Carrega o valor de CHTOI_D1 no Acumulador
+							JP		CHTOI_TESTE 			; Jump para CHTOI_TESTE
+CHTOI_DIG2					LV 		CHTOI_D2 				; Analogo a CHTOI_DIG1
+							MM 		CHTOI_AUX
+							LD 		CHTOI_D2
+							JP		CHTOI_TESTE
+CHTOI_DIG3					LV 		CHTOI_D3 				; Analogo a CHTOI_DIG1
+							MM 		CHTOI_AUX
+							LD 		CHTOI_D3
+							JP		CHTOI_TESTE
+CHTOI_DIG4					LV 		CHTOI_D4 				; Analogo a CHTOI_DIG1
+							MM 		CHTOI_AUX
+							LD 		CHTOI_D4
+							JP		CHTOI_TESTE
+CHTOI_TESTE					-		CH_1 					; Subtrai-se 0040H para verificar se o digito esta entre 30-3F ou 41-46
+							JZ		CHTOI_ERRO				; Se o digito 40H, o caracter é inválido
+							JN		CHTOI_0F				; Se o resultado no acumulador for negativo, o digito esta entre 30-3F
+							-		CH_3 					; Senao, o digito eh maior que 41, subtrai-se 0007H
+							JN		CHTOI_AF 				; Se o resultado for negativo, esta entre 41 e 46 (ou seja, esta entre A-F em ASCII)
+							JP		CHTOI_ERRO 				; Senao eh caracter invalido
+CHTOI_0F					+		CH_2 					; Soma-se 0006H
+							JN		CHTOI_09 				; Se o resultado for negativo, esta entre 0-9 (ASCII)
+							JP		CHTOI_ERRO				; Senao eh caracter invalido (esta entre 3A-3F)
+CHTOI_09					-		CH_2 					; Subtrai-se o valor 0006H que foi adicionado anteriormente
+							+		CH_4 					; Soma-se 0010H e obtem-se o inteiro de 0 a 9
+							MM 		CHTOI_D 				; Salva o resultado em CHTOI_D
+							LD 		CHTOI_AUX 				; Carrega o endereço salvo em CHTOI_AUX
+							+ 		MM_VAZIA 				; Montagem de instrucao dinamica (Salvar o resultado na memoria do digito)
+							MM 		CHTOI_SAVE 				
+							LD 		CHTOI_D
+							JP		CHTOI_SAVE
+CHTOI_AF					+		CH_4 					; Soma-se 0010H e obtem-se o inteiro de A-F
+							MM 		CHTOI_D 				; Salva o resultado em CHTOI_D
+							LD 		CHTOI_AUX				; Carrega o endereço salvo em CHTOI_AUX
+							+ 		MM_VAZIA 				; Montagem de instrucao dinamica (Salvar o resultado na memoria do digito)
+							MM 		CHTOI_SAVE
+							LD 		CHTOI_D
+							JP		CHTOI_SAVE
+CHTOI_SAVE					K 		/0000 					; Executa a instrução montada dinamicamente (Salvar o dado presente no acumulador nas variaveis CHTOI_Dx)
+							LV 		CHTOI_D1 				; Carrega o endereco de CHTOI_D1
+							- 		CHTOI_AUX				; Se for igual ao salvo em CHTOI_AUX,
+							JZ 		CHTOI_DIG2				; Executa-se CHTOI_DIG2
+							LV 		CHTOI_D2 				; Carrega o endereco de CHTOI_D2
+							- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+							JZ 		CHTOI_DIG3				; Executa-se CHTOI_DIG3
+							LV 		CHTOI_D3 				; Carrega o endereco de CHTOI_D3
+							- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+							JZ 		CHTOI_DIG4	 			; Executa-se CHTOI_DIG4
+							LV 		CHTOI_D4 				; Carrega o endereco de CHTOI_D4
+							- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+							JZ 		CHTOI_FIM 				; Executa-se CHTOI_FIM
+CHTOI_FIM					LV    	/0000					; Carrego o valor 0
+							MM      CHTOI_WORD				; Coloco inicialmente 0 na saída
+							LD 		CHTOI_D1 				; Carrega o primeiro digito
+							* 		CH_6 					; Multiplica por 1000H
+							+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+							MM 		CHTOI_WORD				; Armazena o resultado
+							LD 		CHTOI_D2 				; Carrega o segundo digito
+							* 		CH_5 					; Multiplica por 0100H
+							+		CHTOI_WORD 				; Soma-se com a variavel de saida
+							MM 		CHTOI_WORD 				; Armazena o resultado
+							LD 		CHTOI_D3 				; Carrega o terceiro digito
+							* 		CH_4 					; Multiplica por 0010H
+							+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+							MM 		CHTOI_WORD 				; Armazena o resultado
+							LD 		CHTOI_D4 				; Carrega o quarto digito
+							+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+							MM 		CHTOI_WORD 				; Salva o resultado
+							RS 		CHTOI 					; Saida da subrotina
+CHTOI_ERRO					LD 		CH_E 					; Carrega /FFFF (indica erro) no acumulador
+							RS 		CHTOI 					; Sai do programa
+							#		PACK				
 
 ; Subrotina ITOCH ===================================================================================================
 ; Subrotina que converte um número inteiro do acumulador em duas words com os caracteres ASCII hexadecimais 
@@ -203,11 +331,11 @@ ITOCH_DIG_3					K		/0000
 ITOCH_DIG_4					K 		/0000
 ITOCH_CONTADOR_CHEIO		K 		/0004 ; Valor máximo de contador
 ITOCH_CONTADOR_ATUAL        K		/0000 ; Valor atual do contador
-ITOCH_END_LOOP_ATUAL		K 		/0000
-ITOCH_LOOP_VALOR_ATUAL      K       /0000
-ITOCH_LOOP_COD_ATUAL		K 		/0000
-ITOCH_VALOR_SAIDA_1 		K 		/0000
-ITOCH_VALOR_SAIDA_2 		K 		/0000
+ITOCH_END_LOOP_ATUAL		K 		/0000 ; Endereço atualmente manipulado pelo LOOP
+ITOCH_LOOP_VALOR_ATUAL      K       /0000 ; Valor atualmente manipulado pelo LOOP
+ITOCH_LOOP_COD_ATUAL		K 		/0000 ; Último código ASCII obtido pelo LOOP 
+ITOCH_VALOR_SAIDA_1 		K 		/0000 ; Valor final da primeira palavra de saída
+ITOCH_VALOR_SAIDA_2 		K 		/0000 ; Valor final da segunda palavra de saída
 ;Corpo da Subrotina
 ITOCH						K 		/0000					; Início da subrotina ITOCH (endereço reservado para retorno)
 							MM 		ITOCH_ENTRADA 			; Copia a entrada presente no Acumulador para a posição ITOCH_ENTRADA
@@ -226,7 +354,7 @@ ITOCH_SEPARA_DIGITOS_1_E_2	LV		ITOCH_DIG_1 			; Coloca o endereço de ITOCH_DIG_
 							SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
 							LD 		ITOCH_DIG_2             ; Carrego o segundo digito para corrigir a posição 
 							/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
-							MM 		ITOCH_DIG_2
+							MM 		ITOCH_DIG_2             ; Salvo o valor correto do dígito 2   
 ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG_3 no Acumulador
 							MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
 							LV		ITOCH_DIG_4 			; Coloca o endereço de ITOCH_DIG_4 no Acumulador
@@ -236,10 +364,10 @@ ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG
 							SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
 							LD 		ITOCH_DIG_4             ; Carrego o ultimo digito para corrigir a posição 
 							/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
-							MM 		ITOCH_DIG_4
-ITOCH_PREPARA_LOOP			LD 		ITOCH_CONTADOR_CHEIO	
-							MM 		ITOCH_CONTADOR_ATUAL
-							LV 		ITOCH_DIG_1
+							MM 		ITOCH_DIG_4 			; Salvo o valor correto do dígito 4
+ITOCH_PREPARA_LOOP			LD 		ITOCH_CONTADOR_CHEIO	; Coloco o valor máximo de contador...
+							MM 		ITOCH_CONTADOR_ATUAL    ; ...no contador atual
+							LV 		ITOCH_DIG_1             ; Pego o valor do endereço do primeiro digito
 							MM 		ITOCH_END_LOOP_ATUAL	; Guardo o valor do endereço do primeiro digito em ITOCH_END_LOOP_ATUAL						
 ITOCH_CONVERSAO_LOOP		LD 		ITOCH_END_LOOP_ATUAL 	; Salvo o valor do endereço a ser lido
 							+		LD_VAZIA				; Combino com LOAD
@@ -256,40 +384,40 @@ ITOCH_EH_NUMERO             LD 		ITOCH_LOOP_VALOR_ATUAL	; Se é número, obtenho
 ITOCH_FIM_DE_LOOP			MM 		ITOCH_LOOP_COD_ATUAL	; Salvo o código atual na memória
 							LD 		ITOCH_END_LOOP_ATUAL 	; Pego o valor do endereço atual sendo manipulado
 							+		MM_VAZIA				; Combino com MM
-							MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha
+							MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha							
+							LD      ITOCH_LOOP_COD_ATUAL    ; Pego o resultado da iteração
 ITOCH_SALVA_RESULTADO		K 		/0000					; Salvo o resultado da iteração no endereço correspondentes
-ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL
-							+ 		INC_ADDRESS
-							MM 		ITOCH_END_LOOP_ATUAL
-							LD 		ITOCH_CONTADOR_ATUAL
-							- 		INCREASE
-							MM      ITOCH_CONTADOR_ATUAL
-							JZ		ITOCH_FIM_DO_LOOP
-							JP		ITOCH_CONVERSAO_LOOP
-ITOCH_FIM_DO_LOOP			LV 		ITOCH_DIG_1			; Recebe o endereco de memoria de ITOCH_DIG_1	
-							MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
-							LV 	 	ITOCH_DIG_2 		; Recebe o endereco de memoria de ITOCH_DIG_2
-							MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
-							SC 		PACK 				; Chama a sub-rotina PACK
-							MM 		ITOCH_VALOR_SAIDA_1	; Salva o resultado em ITOCH_VALOR_SAIDA_1
-							LV 		ITOCH_DIG_3			; Recebe o endereco de memoria de ITOCH_DIG_3	
-							MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
-							LV 	 	ITOCH_DIG_4 		; Recebe o endereco de memoria de ITOCH_DIG_4
-							MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
-							SC 		PACK 				; Chama a sub-rotina PACK
-							MM 		ITOCH_VALOR_SAIDA_2	; Salva o resultado em ITOCH_VALOR_SAIDA_2
-							LD 		ITOCH_END_SAIDA_1 	; Pego o primeiro endereço de saída
-							+ 		MM_VAZIA 			; Combina com a instrução MM
-							MM 		ITOCH_SALVA_SAIDA_1	; Salva a instrução montada
-							LD      ITOCH_VALOR_SAIDA_1 ; Pego o valor da primeira saída
-ITOCH_SALVA_SAIDA_1			K 		/0000				; Executa instrução montada para salvar a primeira saída
+ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL	; Incremento o endereço a ser manipulado pelo loop 
+							+ 		INC_ADDRESS				; 
+							MM 		ITOCH_END_LOOP_ATUAL    ;
+							LD 		ITOCH_CONTADOR_ATUAL	; Decremento o contador atual
+							- 		INCREASE                ;
+							MM      ITOCH_CONTADOR_ATUAL    ;
+							JZ		ITOCH_FIM_DO_LOOP       ; Se contandor = 0, pulo para fim do loop
+							JP		ITOCH_CONVERSAO_LOOP    ; Se não, realizo mais uma iteração
+ITOCH_FIM_DO_LOOP			LV 		ITOCH_DIG_1				; Recebe o endereco de memoria de ITOCH_DIG_1	
+							MM 		PACK_VAR1				; Salva o endereco na memoria PACK_VAR1
+							LV 	 	ITOCH_DIG_2 			; Recebe o endereco de memoria de ITOCH_DIG_2
+							MM 		PACK_VAR2				; Salva o endereco na memoria PACK_VAR2
+							SC 		PACK 					; Chama a sub-rotina PACK
+							MM 		ITOCH_VALOR_SAIDA_1		; Salva o resultado em ITOCH_VALOR_SAIDA_1
+							LV 		ITOCH_DIG_3				; Recebe o endereco de memoria de ITOCH_DIG_3	
+							MM 		PACK_VAR1				; Salva o endereco na memoria PACK_VAR1
+							LV 	 	ITOCH_DIG_4 			; Recebe o endereco de memoria de ITOCH_DIG_4
+							MM 		PACK_VAR2				; Salva o endereco na memoria PACK_VAR2
+							SC 		PACK 					; Chama a sub-rotina PACK
+							MM 		ITOCH_VALOR_SAIDA_2		; Salva o resultado em ITOCH_VALOR_SAIDA_2
+							LD 		ITOCH_END_SAIDA_1 		; Pego o primeiro endereço de saída
+							+ 		MM_VAZIA 				; Combina com a instrução MM
+							MM 		ITOCH_SALVA_SAIDA_1		; Salva a instrução montada
+							LD      ITOCH_VALOR_SAIDA_1 	; Pego o valor da primeira saída
+ITOCH_SALVA_SAIDA_1			K 		/0000					; Executa instrução montada para salvar a primeira saída
 
 							#		PACK				
-							LD 		ITOCH_END_SAIDA_2 	; Pego o primeiro endereço de saída
-							+ 		MM_VAZIA 			; Combina com a instrução MM
-							MM 		ITOCH_SALVA_SAIDA_2	; Salva a instrução montada
-							LD      ITOCH_VALOR_SAIDA_2 ; Pego o valor da primeira saída
-ITOCH_SALVA_SAIDA_2			K 		/0000				; Executa instrução montada para salvar a primeira saída
+							LD 		ITOCH_END_SAIDA_2 		; Pego o primeiro endereço de saída
+							+ 		MM_VAZIA 				; Combina com a instrução MM
+							MM 		ITOCH_SALVA_SAIDA_2		; Salva a instrução montada
+							LD      ITOCH_VALOR_SAIDA_2 	; Pego o valor da primeira saída
+ITOCH_SALVA_SAIDA_2			K 		/0000					; Executa instrução montada para salvar a primeira saída
 ITOCH_FIM_DA_SUBROTINA		RS 		ITOCH
-							#		PACK				
-
+							#		PACK	

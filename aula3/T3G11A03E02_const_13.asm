@@ -1,17 +1,24 @@
-				& 		/0000
 ;Exportando as constantes ================================================================
 SHIFT1			>
 SHIFT2			>
 TRATA_NEG		>
-VOLTA_NEG 		>
+VOLTA_NEG		>
 MM_VAZIA		>
-LD_VAZIA		>
-INC_ADDRESS 	>
+LD_VAZIA    	>
+INC_ADDRESS		>
 INCREASE		>
 INVALID_ADDR	>
 CHECK_DIGITO	>
-DIGITO_TO_HEX	> 		
-LETRA_TO_HEX	>		
+DIGITO_TO_HEX	>
+LETRA_TO_HEX	>
+CH_1			>
+CH_2			>
+CH_3			>
+CH_4			>
+CH_5			>
+CH_6			>
+CH_E			>
+				& 		/0000
 ;Definição e valores das contantes =============================================================
 SHIFT1			K		/0010		; Constante que desloca em 1 posição os bits das palavras
 SHIFT2			K 		/0100		; Constante que desloca em 2 posições os bits das palavras
@@ -25,4 +32,14 @@ INVALID_ADDR	K		/1000       ; Constante de endereço invalido. Qualquer endereç
 CHECK_DIGITO	K 		/000A		; Constante utilizada para checar se é digito (se você subtrair e for positivo, é letra)
 DIGITO_TO_HEX	K 		/0030		; Constante que, somada com um digito, dá o seu código ASCII
 LETRA_TO_HEX	K		/0037		; Constante que, somada com uma letra, dá o seu código ASCII
-				# 		SHIFT2      ; Pseudo-código de fim de arquivo
+
+
+; Constantes para a rotina CHTOI
+CH_1			K		/0040
+CH_2			K		/0006
+CH_3			K		/0007
+CH_4			K		/0010
+CH_5			K		/0100
+CH_6 			K 		/1000
+CH_E			K		/FFFF
+				# 		SHIFT1      ; Pseudo-código de fim de arquivo
