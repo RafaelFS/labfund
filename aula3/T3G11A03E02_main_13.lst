@@ -5,7 +5,7 @@
 
 				;							& 		/0000				; Inicio do programa em 0000
 a000 0008		;	INI						JP 		MAIN_ITOCH			; Pula para a label MAIN_PACK
-8002 79ab		;	ENTRADA_ITOCH			K		/79AB               ; Entrada de ITOCH
+8002 ffff		;	ENTRADA_ITOCH			K		/FFFF              ; Entrada de ITOCH
 8004 0000		;	SAIDA_ITOCH_1 			K 		/0000				; Primeira palavra de saida de ITOCH
 8006 0000		;	SAIDA_ITOCH_2 			K 		/0000				; Segunda palavra de saida de ITOCH
 					

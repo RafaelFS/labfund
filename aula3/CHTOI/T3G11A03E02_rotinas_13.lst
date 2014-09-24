@@ -1,4 +1,4 @@
-; T3G11A03E01_rotinas_12.asm
+; T3G11A03E02_rotinas_13.asm
 ; Arquivo que contém as rotinas desenvolvidas nas aulas anteriores
 				;						&       /0000
 ;Exportando PACK  ==================================================================
@@ -7,37 +7,46 @@
 2002 0000 ; "PACK_VAR2>"		;	PACK_VAR2   		>           ; Endereço da segunda palabra a ser empacotada
 
 ;Exportando UNPACK  =======================================================================
-202a 0000 ; "UNPACK>"		;	UNPACK				>			; Sub-rotina UNPACK
+202a 0000 ; "UNPACK>"		;	UNPACK              >
 201e 0000 ; "UNPACK_OUT_ADDR1>"		;	UNPACK_OUT_ADDR1  	>	     	; Endereço de saída da primeira palavra 
 2020 0000 ; "UNPACK_OUT_ADDR2>"		;	UNPACK_OUT_ADDR2 	>       	; Endereço de saída da segunda palavra 
 2022 0000 ; "UNPACK_PACKAGE>"		;	UNPACK_PACKAGE     	>         	; Word empacotada
 
 ;Exportando MEMCOPY =======================================================================
-2094 0000 ; "MEMCOPY>"		;	MEMCOPY 			>			; Subrotina MEMCOPY
+2094 0000 ; "MEMCOPY>"		;	MEMCOPY             >
 2080 0000 ; "MEMCOPY_NWORDS>"		;	MEMCOPY_NWORDS 		> 			; Número de palavras a serem copiadas (cópia da subrotina)
 2082 0000 ; "MEMCOPY_END_ORIGEM>"		;	MEMCOPY_END_ORIGEM	>			; Endereço inicial da sequência de origem (cópia da subrotina)
 2084 0000 ; "MEMCOPY_END_DESTINO>"		;	MEMCOPY_END_DESTINO	>			; Endereço inicial da sequência de destino (cópia da subrotina)
 
-;Exportando ITOCH ===============================================================================
-210a 0000 ; "ITOCH>"		;	ITOCH 				>
-20ea 0000 ; "ITOCH_END_SAIDA_1>"		;	ITOCH_END_SAIDA_1	>
-20ec 0000 ; "ITOCH_END_SAIDA_2>"		;	ITOCH_END_SAIDA_2	>
-20ee 0000 ; "ITOCH_ENTRADA>"		;	ITOCH_ENTRADA       >
-
+; Exportando CHTOI  =======================================================================
+20fc 0000 ; "CHTOI>"		;	CHTOI				>
+20ea 0000 ; "CHTOI_IN1>"		;	CHTOI_IN1		 	>           ; Endereço de entrada da primeira palavra
+20ec 0000 ; "CHTOI_IN2>"		;	CHTOI_IN2 			>       	; Endereço de entrada da segunda palavra
+20ee 0000 ; "CHTOI_WORD>"		;	CHTOI_WORD	     	>       	; Word final
+20f0 0000 ; "CHTOI_AUX>"		;	CHTOI_AUX 			>
+20f2 0000 ; "CHTOI_D>"		;	CHTOI_D 			>
+20f4 0000 ; "CHTOI_D1>"		;	CHTOI_D1          	>       	; Digito 1 
+20f6 0000 ; "CHTOI_D2>"		;	CHTOI_D2  	     	>       	; Digito 2 
+20f8 0000 ; "CHTOI_D3>"		;	CHTOI_D3  	     	>       	; Digito 3 
+20fa 0000 ; "CHTOI_D4>"		;	CHTOI_D4  	     	>       	; Digito 4 
 
 ;Importando constantes ===========================================================
-4000 0000 ; "SHIFT1<"		;	SHIFT1				<		; Constante que desloca em 1 posição os bits das palavras
-4001 0000 ; "SHIFT2<"		;	SHIFT2				<		; Constante que desloca em 2 posições os bits das palavras
-4002 0000 ; "TRATA_NEG<"		;	TRATA_NEG			<		; Constante utilizada para passar um numero negativo para um positivo
-4003 0000 ; "VOLTA_NEG<"		;	VOLTA_NEG			<		; Constante utilizada para voltar o número para negativo
-4004 0000 ; "MM_VAZIA<"		;	MM_VAZIA			<		; Move to memory vazia para criação de instrução dinamicamente
-4005 0000 ; "LD_VAZIA<"		;	LD_VAZIA    		<		; Load vazia para criação de intruções dinamicamente
-4006 0000 ; "INC_ADDRESS<"		;	INC_ADDRESS			<		; Constante de incremento de endereço
-4007 0000 ; "INCREASE<"		;	INCREASE			<		; Constante de decremento de contagem
-4008 0000 ; "INVALID_ADDR<"		;	INVALID_ADDR		<       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
-4009 0000 ; "CHECK_DIGITO<"		;	CHECK_DIGITO		<		; Constante utilizada para checar se é digito (se você subtrair e for positivo, é letra)
-4010 0000 ; "DIGITO_TO_HEX<"		;	DIGITO_TO_HEX		< 		; Constante que, somada com um digito, dá o seu código ASCII
-4011 0000 ; "LETRA_TO_HEX<"		;	LETRA_TO_HEX		<		; Constante que, somada com uma letra, dá o seu código ASCII
+4000 0000 ; "SHIFT2<"		;	SHIFT2	    		<           ; Constante que desloca em 2 posições os bits das palavras
+4001 0000 ; "LD_VAZIA<"		;	LD_VAZIA     		<           ; Instrução
+4002 0000 ; "TRATA_NEG<"		;	TRATA_NEG			<
+4003 0000 ; "VOLTA_NEG<"		;	VOLTA_NEG 			<
+4004 0000 ; "MM_VAZIA<"		;	MM_VAZIA			<
+4005 0000 ; "LD_VAZIA<"		;	LD_VAZIA			<
+4006 0000 ; "INC_ADDRESS<"		;	INC_ADDRESS 		<
+4007 0000 ; "INCREASE<"		;	INCREASE			<
+4008 0000 ; "INVALID_ADDR<"		;	INVALID_ADDR		<
+4009 0000 ; "CH_1<"		;	CH_1				<
+4010 0000 ; "CH_2<"		;	CH_2				<
+4011 0000 ; "CH_3<"		;	CH_3				<
+4012 0000 ; "CH_4<"		;	CH_4				<
+4013 0000 ; "CH_5<"		;	CH_5 				<
+4014 0000 ; "CH_6<"		;	CH_6 				<
+4015 0000 ; "CH_E<"		;	CH_E				<
 	
 ; Subrotina PACK ===============================================================================
 ; Recebe o endereço de duas palavras e retorna no Acumulador a composição entre as duas
@@ -51,7 +60,7 @@ a006 8000		;				LD      PACK_VAR1   ; Recebe o endereco de IN1 (conteudo de PACK
 d008 4005		;				+       LD_VAZIA     ; Soma com (8000H)
 a00a 900c		;				MM      PACK_X      ; Salva no proximo endereco de memoria
 800c 0000		;	PACK_X      K       /0000       ; Executa a instrucao recem-montada
-d00e 6001		;				*       SHIFT2      ; Multiplica por 100H
+d00e 6000		;				*       SHIFT2      ; Multiplica por 100H
 a010 9000		;				MM      PACK_VAR1   ; Salva na memoria PACK_VAR1
 a012 8002		;				LD      PACK_VAR2   ; Recebe o endereco de IN2 (conteudo de PACK_VAR2)
 d014 4005		;				+       LD_VAZIA    ; Soma com (8000H)
@@ -77,7 +86,7 @@ a01c b004		;				RS      PACK        ; Fim da sub-rotina
 802a 0000		;	UNPACK      		K       /0000       			; Início da subrotina UNPACK (endereço reservado para retorno)
 a02c 9022		;						MM      UNPACK_PACKAGE  		; Copia o contéudo do Acumulador para PACKAGE;
 a02e 2056		;						JN      UNPACK_NEGATIVO 		; Se a palavra é um número negativo, pula para o caso NEGATIVO
-d030 7001		;	UNPACK_POSITIVO    	/       SHIFT2 	    			; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
+d030 7000		;	UNPACK_POSITIVO    	/       SHIFT2 	    			; Se a palavra é positiva, divido por /100 para obter a primeira palavra no Acumulador
 a032 9024		;						MM      UNPACK_W1 				; Copio a primeira palavra em W1;
 a034 801e		;						LD      UNPACK_OUT_ADDR1		; Copio o endereço de saída da primeira palavra para o Acumulador
 d036 4004		;						+       MM_VAZIA     			; Combina o endereço de saída da primeira palavra com a isntrução MM
@@ -85,7 +94,7 @@ a038 903c		;						MM      UNPACK_SALVA1   		; Tranfere a instrução completa pa
 a03a 8024		;						LD      UNPACK_W1       		; Copia o valor de W1 para o Acumulador
 803c 0000		;	UNPACK_SALVA1      	K       /0000       			; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 a03e 8024		;						LD      UNPACK_W1       		; Copia o valor de W1 para o Acumulador
-d040 6001		;						*       SHIFT2 					; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
+d040 6000		;						*       SHIFT2 					; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
 a042 9028		;						MM      UNPACK_W1_DESLOCADA 	; Salvo a palavra 1 deslocada em W1DESLOCADA
 a044 8022		;						LD      UNPACK_PACKAGE     		; Copio a palavra empacotada para o Acumulador
 a046 5028		;						-       UNPACK_W1_DESLOCADA 	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
@@ -97,7 +106,7 @@ a050 8026		;						LD      UNPACK_W2          		; Copia o valor de W2 para o Acum
 8052 0000		;	UNPACK_SALVA2      	K       /0000       			; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 a054 007e		;						JP      UNPACK_FIM 	    
 d056 4002		;	UNPACK_NEGATIVO    	+       TRATA_NEG    			; Soma 8000 no numero negativo para poder tratar como positivo
-d058 7001		;						/       SHIFT2 					; Divido por /100 para obter a primeira palavra passada para positiva no Acumulador
+d058 7000		;						/       SHIFT2 					; Divido por /100 para obter a primeira palavra passada para positiva no Acumulador
 d05a 4003		;						+       VOLTA_NEG    			; Soma 80 para passar a primeira palavra para positiva
 a05c 9024		;						MM      UNPACK_W1          		; Copio a primeira palavra em W1;
 a05e 801e		;						LD      UNPACK_OUT_ADDR1  		; Copio o endereço de saída da primeira palavra para o Acumulador
@@ -106,7 +115,7 @@ a062 9066		;						MM      UNPACK_SALVA3      		; Tranfere a instrução completa
 a064 8024		;						LD      UNPACK_W1          		; Copia o valor de W1 para o Acumulador
 8066 0000		;	UNPACK_SALVA3      	K       /0000       			; Executa a instrução MM <valor contido em W1XADDRESS>, salvando a palavra 1 na posição de saída desejada
 a068 8024		;						LD      UNPACK_W1         		; Copia o valor de W1 para o Acumulador
-d06a 6001		;						*       SHIFT2		  			; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
+d06a 6000		;						*       SHIFT2		  			; Multiplica a primeira palavra por /100 para deslocá-la duas posições para a direita
 a06c 9028		;						MM      UNPACK_W1_DESLOCADA 	; Salvo a palavra 1 deslocada em W1DESLOCADA
 a06e 8022		;						LD      UNPACK_PACKAGE			; Copio a palavra empacotada para o Acumulador
 a070 5028		;						-       UNPACK_W1_DESLOCADA 	; Subtraio os dois primeiros digitos da palavra empacotada para obter a segunda palavra
@@ -185,110 +194,113 @@ a0e2 908a		;								MM 		MEMCOPY_CONTAGEM
 a0e4 00bc		;								JP		MEMCOPY_LOOP 			; Retorna ao Inicio do LOOP 
 a0e6 8092		;	MEMCOPY_FIM					LD 		MEMCOPY_RETORNO			; Coloco o valor de RETORNO no Acumulador
 a0e8 b094		;								RS 		MEMCOPY					; Retorno da subrotina
-							
 
-; Subrotina ITOCH ===================================================================================================
-; Subrotina que converte um número inteiro do acumulador em duas words com os caracteres ASCII hexadecimais 
-; correspondentes, colocando-os em dois endereços da memória.
+; Subrotina CHTOI  =============================================================================
+; Subrotina que converte duas words contendo caracteres ASCII hexadecimais para o numero inteiro
+; correspondente.
 
-; Variáveis da Subrotina ITOCH
-80ea 0000		;	ITOCH_END_SAIDA_1			K		/0000 ; Endereço de saída de ITOCH (bits mais significativos)
-80ec 0000		;	ITOCH_END_SAIDA_2			K		/0000 ; Endereço de saída de ITOCH (bits menos significativos)
-80ee 0000		;	ITOCH_ENTRADA				K		/0000 ; Cópia da entrada de ITOCH
-80f0 0000		;	ITOCH_WORD_1				K		/0000 ; Palavra mais significativa da entrada
-80f2 0000		;	ITOCH_WORD_2				K		/0000 ; Palavra menos significativa da entrada
-80f4 0000		;	ITOCH_DIG_1					K		/0000 ; Entradas separada em dígitos: 1 é o digito mais significativo, 4 é o menos significativo
-80f6 0000		;	ITOCH_DIG_2					K		/0000
-80f8 0000		;	ITOCH_DIG_3					K		/0000
-80fa 0000		;	ITOCH_DIG_4					K 		/0000
-80fc 0004		;	ITOCH_CONTADOR_CHEIO		K 		/0004 ; Valor máximo de contador
-80fe 0000		;	ITOCH_CONTADOR_ATUAL        K		/0000 ; Valor atual do contador
-8100 0000		;	ITOCH_END_LOOP_ATUAL		K 		/0000
-8102 0000		;	ITOCH_LOOP_VALOR_ATUAL      K       /0000
-8104 0000		;	ITOCH_LOOP_COD_ATUAL		K 		/0000
-8106 0000		;	ITOCH_VALOR_SAIDA_1 		K 		/0000
-8108 0000		;	ITOCH_VALOR_SAIDA_2 		K 		/0000
-;Corpo da Subrotina
-810a 0000		;	ITOCH						K 		/0000					; Início da subrotina ITOCH (endereço reservado para retorno)
-a10c 90ee		;								MM 		ITOCH_ENTRADA 			; Copia a entrada presente no Acumulador para a posição ITOCH_ENTRADA
-a10e 30f0		;	ITOCH_SEPARANDO_PALAVRAS	LV		ITOCH_WORD_1 			; Coloca o endereço de ITOCH_WORD_1 no Acumulador
-a110 901e		;								MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
-a112 30f2		;								LV		ITOCH_WORD_2 			; Coloca o endereço de ITOCH_WORD_2 no Acumulador
-a114 9020		;								MM 		UNPACK_OUT_ADDR2		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR2
-a116 80ee		;								LD		ITOCH_ENTRADA 			; Copia o conteúdo de ITOCH_ENTRADA para o Acumulador
-a118 a02a		;								SC  	UNPACK      			; Executa a subrotina UNPACK para separar as duas palavras						
-a11a 30f4		;	ITOCH_SEPARA_DIGITOS_1_E_2	LV		ITOCH_DIG_1 			; Coloca o endereço de ITOCH_DIG_1 no Acumulador
-a11c 901e		;								MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
-a11e 30f6		;								LV		ITOCH_DIG_2 			; Coloca o endereço de ITOCH_DIG_2 no Acumulador
-a120 9020		;								MM 		UNPACK_OUT_ADDR2		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR2
-a122 80f0		;								LD 		ITOCH_WORD_1			; Copia a primeira palavra para o Acumulador
-d124 6000		;								* 		SHIFT1					; Desloco os digitos para o meio da palavra
-a126 a02a		;								SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
-a128 80f6		;								LD 		ITOCH_DIG_2             ; Carrego o segundo digito para corrigir a posição 
-d12a 7000		;								/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
-a12c 90f6		;								MM 		ITOCH_DIG_2
-a12e 30f8		;	ITOCH_SEPARA_DIGITOS_3_E_4  LV		ITOCH_DIG_3 			; Coloca o endereço de ITOCH_DIG_3 no Acumulador
-a130 901e		;								MM 		UNPACK_OUT_ADDR1		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR1
-a132 30fa		;								LV		ITOCH_DIG_4 			; Coloca o endereço de ITOCH_DIG_4 no Acumulador
-a134 9020		;								MM 		UNPACK_OUT_ADDR2		; Copia o conteúdo do Acumulador para UNPACK_OUT_ADDR2
-a136 80f2		;								LD 		ITOCH_WORD_2			; Copia a segunda palavra para o Acumulador
-d138 6000		;								* 		SHIFT1					; Desloco os digitos para o meio da palavra
-a13a a02a		;								SC 		UNPACK 					; Separo os digitos com a ajuda de UNPACK		
-a13c 80fa		;								LD 		ITOCH_DIG_4             ; Carrego o ultimo digito para corrigir a posição 
-d13e 7000		;								/		SHIFT1					; Corrijo a posição através de um deslocamento para a direita
-a140 90fa		;								MM 		ITOCH_DIG_4
-a142 80fc		;	ITOCH_PREPARA_LOOP			LD 		ITOCH_CONTADOR_CHEIO	
-a144 90fe		;								MM 		ITOCH_CONTADOR_ATUAL
-a146 30f4		;								LV 		ITOCH_DIG_1
-a148 9100		;								MM 		ITOCH_END_LOOP_ATUAL	; Guardo o valor do endereço do primeiro digito em ITOCH_END_LOOP_ATUAL						
-a14a 8100		;	ITOCH_CONVERSAO_LOOP		LD 		ITOCH_END_LOOP_ATUAL 	; Salvo o valor do endereço a ser lido
-d14c 4005		;								+		LD_VAZIA				; Combino com LOAD
-a14e 9150		;								MM		ITOCH_OBTER_VALOR_ATUAL	; Mando a instrução combinada para a proxima linha				
-8150 0000		;	ITOCH_OBTER_VALOR_ATUAL		K		/0000					; Leio o valor atual
-a152 9102		;								MM 		ITOCH_LOOP_VALOR_ATUAL	; Guardo o valor atual em ITOCH_LOOP_VALOR_ATUAL							
-d154 5009		;								-		CHECK_DIGITO			; Se subtrair CHECK_DIGITO e for negativo...
-a156 215e		;								JN		ITOCH_EH_NUMERO			; ...pulo para caso Numero
-a158 8102		;	ITOCH_EH_LETRA				LD 		ITOCH_LOOP_VALOR_ATUAL	; Se estou aqui é Letra e obtenho o valor atual
-d15a 4011		;								+ 		LETRA_TO_HEX			; Transformo no código ASCII
-a15c 0162		;								JP		ITOCH_FIM_DE_LOOP 		; Com o código no acumulador, vou para o fim do loop
-a15e 8102		;	ITOCH_EH_NUMERO             LD 		ITOCH_LOOP_VALOR_ATUAL	; Se é número, obtenho o valor atual
-d160 4010		;								+ 		DIGITO_TO_HEX 			; Transformo no código atual
-a162 9104		;	ITOCH_FIM_DE_LOOP			MM 		ITOCH_LOOP_COD_ATUAL	; Salvo o código atual na memória
-a164 8100		;								LD 		ITOCH_END_LOOP_ATUAL 	; Pego o valor do endereço atual sendo manipulado
-d166 4004		;								+		MM_VAZIA				; Combino com MM
-a168 916c		;								MM 		ITOCH_SALVA_RESULTADO	; Mando a instrução montada para a próxima linha							
-a16a 8104		;								LD      ITOCH_LOOP_COD_ATUAL    ;
-816c 0000		;	ITOCH_SALVA_RESULTADO		K 		/0000					; Salvo o resultado da iteração no endereço correspondentes
-a16e 8100		;	ITOCH_RETORNO_DE_LOOP       LD 		ITOCH_END_LOOP_ATUAL
-d170 4006		;								+ 		INC_ADDRESS
-a172 9100		;								MM 		ITOCH_END_LOOP_ATUAL
-a174 80fe		;								LD 		ITOCH_CONTADOR_ATUAL
-d176 5007		;								- 		INCREASE
-a178 90fe		;								MM      ITOCH_CONTADOR_ATUAL
-a17a 117e		;								JZ		ITOCH_FIM_DO_LOOP
-a17c 014a		;								JP		ITOCH_CONVERSAO_LOOP
-a17e 30f4		;	ITOCH_FIM_DO_LOOP			LV 		ITOCH_DIG_1			; Recebe o endereco de memoria de ITOCH_DIG_1	
-a180 9000		;								MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
-a182 30f6		;								LV 	 	ITOCH_DIG_2 		; Recebe o endereco de memoria de ITOCH_DIG_2
-a184 9002		;								MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
-a186 a004		;								SC 		PACK 				; Chama a sub-rotina PACK
-a188 9106		;								MM 		ITOCH_VALOR_SAIDA_1	; Salva o resultado em ITOCH_VALOR_SAIDA_1
-a18a 30f8		;								LV 		ITOCH_DIG_3			; Recebe o endereco de memoria de ITOCH_DIG_3	
-a18c 9000		;								MM 		PACK_VAR1			; Salva o endereco na memoria PACK_VAR1
-a18e 30fa		;								LV 	 	ITOCH_DIG_4 		; Recebe o endereco de memoria de ITOCH_DIG_4
-a190 9002		;								MM 		PACK_VAR2			; Salva o endereco na memoria PACK_VAR2
-a192 a004		;								SC 		PACK 				; Chama a sub-rotina PACK
-a194 9108		;								MM 		ITOCH_VALOR_SAIDA_2	; Salva o resultado em ITOCH_VALOR_SAIDA_2
-a196 80ea		;								LD 		ITOCH_END_SAIDA_1 	; Pego o primeiro endereço de saída
-d198 4004		;								+ 		MM_VAZIA 			; Combina com a instrução MM
-a19a 919e		;								MM 		ITOCH_SALVA_SAIDA_1	; Salva a instrução montada
-a19c 8106		;								LD      ITOCH_VALOR_SAIDA_1 ; Pego o valor da primeira saída
-819e 0000		;	ITOCH_SALVA_SAIDA_1			K 		/0000				; Executa instrução montada para salvar a primeira saída
+; Variaveis de CHTOI
+80ea 0000		;	CHTOI_IN1		 	K       /0000       	; Endereço de entrada da primeira palavra 
+80ec 0000		;	CHTOI_IN2 			K       /0000       	; Endereço de entrada da segunda palavra
+80ee 0000		;	CHTOI_WORD	     	K       /0000       	; Word final
+80f0 0000		;	CHTOI_AUX 			K		/0000			; Variavel auxiliar (guarda o endereco das variavels CHTOI_DX)
+80f2 0000		;	CHTOI_D 			K 		/0000			; Variavel auxiliar (guarda o valor a ser salvo)
+80f4 0000		;	CHTOI_D1          	K       /0000       	; Digito 1 
+80f6 0000		;	CHTOI_D2  	     	K       /0000       	; Digito 2 
+80f8 0000		;	CHTOI_D3  	     	K       /0000       	; Digito 3 
+80fa 0000		;	CHTOI_D4  	     	K       /0000       	; Digito 4 
 
-a1a0 80ec		;								LD 		ITOCH_END_SAIDA_2 	; Pego o primeiro endereço de saída
-d1a2 4004		;								+ 		MM_VAZIA 			; Combina com a instrução MM
-a1a4 91a8		;								MM 		ITOCH_SALVA_SAIDA_2	; Salva a instrução montada
-a1a6 8108		;								LD      ITOCH_VALOR_SAIDA_2 ; Pego o valor da primeira saída
-81a8 0000		;	ITOCH_SALVA_SAIDA_2			K 		/0000				; Executa instrução montada para salvar a primeira saída
-a1aa b10a		;	ITOCH_FIM_DA_SUBROTINA		RS 		ITOCH
-
+; Corpo da subrotina
+80fc 0000		;	CHTOI 						K		/0000					; Inicio da subrotina CHTOI (endereco reservado para retorno)
+a0fe 30f4		;								LV 		CHTOI_D1 				; Guarda o endereco de CHTOI_D1 no Acumulador
+a100 901e		;								MM      UNPACK_OUT_ADDR1		; a Primeira saida de UNPACK sera salva em CHTOI_D1
+a102 30f6		;								LV   	CHTOI_D2 				;
+a104 9020		;								MM 		UNPACK_OUT_ADDR2 		; a Segunda saida de UNPACK sera salva em CHTOI_D2
+a106 80ea		;								LD 		CHTOI_IN1				; recebe o endereço da primeira palavra
+d108 4005		;								+ 		LD_VAZIA				; Montagem de instrucao dinamica
+a10a 910c		;								MM 		WORD1					;
+810c 0000		;	WORD1 						K 		/0000					; Carrega o valor da primeira palavra no Acumulador
+a10e a02a		;								SC 		UNPACK 					; Execucao da subrotina UNPACK, para separar a palavra
+a110 30f8		;								LV 		CHTOI_D3 				; Repeticao do processo para a segunda palavra
+a112 901e		;								MM      UNPACK_OUT_ADDR1
+a114 30fa		;								LV   	CHTOI_D4
+a116 9020		;								MM 		UNPACK_OUT_ADDR2
+a118 80ec		;								LD 		CHTOI_IN2				;
+d11a 4005		;								+ 		LD_VAZIA
+a11c 911e		;								MM 		WORD2
+811e 0000		;	WORD2 						K 		/0000
+a120 a02a		;								SC 		UNPACK
+; Inicio das conversoes de hexa para inteiros
+a122 30f4		;	CHTOI_DIG1					LV 		CHTOI_D1 				; Endereço de CHTOI_D1 para Acumulador
+a124 90f0		;								MM 		CHTOI_AUX 				; Salva o endereço de CHTOI_D1 em CHTOI_AUX
+a126 80f4		;								LD 		CHTOI_D1 				; Carrega o valor de CHTOI_D1 no Acumulador
+a128 0142		;								JP		CHTOI_TESTE 			; Jump para CHTOI_TESTE
+a12a 30f6		;	CHTOI_DIG2					LV 		CHTOI_D2 				; Analogo a CHTOI_DIG1
+a12c 90f0		;								MM 		CHTOI_AUX
+a12e 80f6		;								LD 		CHTOI_D2
+a130 0142		;								JP		CHTOI_TESTE
+a132 30f8		;	CHTOI_DIG3					LV 		CHTOI_D3 				; Analogo a CHTOI_DIG1
+a134 90f0		;								MM 		CHTOI_AUX
+a136 80f8		;								LD 		CHTOI_D3
+a138 0142		;								JP		CHTOI_TESTE
+a13a 30fa		;	CHTOI_DIG4					LV 		CHTOI_D4 				; Analogo a CHTOI_DIG1
+a13c 90f0		;								MM 		CHTOI_AUX
+a13e 80fa		;								LD 		CHTOI_D4
+a140 0142		;								JP		CHTOI_TESTE
+d142 5009		;	CHTOI_TESTE					-		CH_1 					; Subtrai-se 0040H para verificar se o digito esta entre 30-3F ou 41-46
+a144 11b0		;								JZ		CHTOI_ERRO				; Se o digito 40H, o caracter é inválido
+a146 214e		;								JN		CHTOI_0F				; Se o resultado no acumulador for negativo, o digito esta entre 30-3F
+d148 5011		;								-		CH_3 					; Senao, o digito eh maior que 41, subtrai-se 0007H
+a14a 2164		;								JN		CHTOI_AF 				; Se o resultado for negativo, esta entre 41 e 46 (ou seja, esta entre A-F em ASCII)
+a14c 01b0		;								JP		CHTOI_ERRO 				; Senao eh caracter invalido
+d14e 4010		;	CHTOI_0F					+		CH_2 					; Soma-se 0006H
+a150 2154		;								JN		CHTOI_09 				; Se o resultado for negativo, esta entre 0-9 (ASCII)
+a152 01b0		;								JP		CHTOI_ERRO				; Senao eh caracter invalido (esta entre 3A-3F)
+d154 5010		;	CHTOI_09					-		CH_2 					; Subtrai-se o valor 0006H que foi adicionado anteriormente
+d156 4012		;								+		CH_4 					; Soma-se 0010H e obtem-se o inteiro de 0 a 9
+a158 90f2		;								MM 		CHTOI_D 				; Salva o resultado em CHTOI_D
+a15a 80f0		;								LD 		CHTOI_AUX 				; Carrega o endereço salvo em CHTOI_AUX
+d15c 4004		;								+ 		MM_VAZIA 				; Montagem de instrucao dinamica (Salvar o resultado na memoria do digito)
+a15e 9172		;								MM 		CHTOI_SAVE 				
+a160 80f2		;								LD 		CHTOI_D
+a162 0172		;								JP		CHTOI_SAVE
+d164 4012		;	CHTOI_AF					+		CH_4 					; Soma-se 0010H e obtem-se o inteiro de A-F
+a166 90f2		;								MM 		CHTOI_D 				; Salva o resultado em CHTOI_D
+a168 80f0		;								LD 		CHTOI_AUX				; Carrega o endereço salvo em CHTOI_AUX
+d16a 4004		;								+ 		MM_VAZIA 				; Montagem de instrucao dinamica (Salvar o resultado na memoria do digito)
+a16c 9172		;								MM 		CHTOI_SAVE
+a16e 80f2		;								LD 		CHTOI_D
+a170 0172		;								JP		CHTOI_SAVE
+8172 0000		;	CHTOI_SAVE					K 		/0000 					; Executa a instrução montada dinamicamente (Salvar o dado presente no acumulador nas variaveis CHTOI_Dx)
+a174 30f4		;								LV 		CHTOI_D1 				; Carrega o endereco de CHTOI_D1
+a176 50f0		;								- 		CHTOI_AUX				; Se for igual ao salvo em CHTOI_AUX,
+a178 112a		;								JZ 		CHTOI_DIG2				; Executa-se CHTOI_DIG2
+a17a 30f6		;								LV 		CHTOI_D2 				; Carrega o endereco de CHTOI_D2
+a17c 50f0		;								- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+a17e 1132		;								JZ 		CHTOI_DIG3				; Executa-se CHTOI_DIG3
+a180 30f8		;								LV 		CHTOI_D3 				; Carrega o endereco de CHTOI_D3
+a182 50f0		;								- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+a184 113a		;								JZ 		CHTOI_DIG4	 			; Executa-se CHTOI_DIG4
+a186 30fa		;								LV 		CHTOI_D4 				; Carrega o endereco de CHTOI_D4
+a188 50f0		;								- 		CHTOI_AUX 				; Se for igual ao salvo em CHTOI_AUX,
+a18a 118c		;								JZ 		CHTOI_FIM 				; Executa-se CHTOI_FIM
+818c 3000		;	CHTOI_FIM					LV    	/0000					; Carrego o valor 0
+a18e 90ee		;								MM      CHTOI_WORD				; Coloco inicialmente 0 na saída
+a190 80f4		;								LD 		CHTOI_D1 				; Carrega o primeiro digito
+d192 6014		;								* 		CH_6 					; Multiplica por 1000H
+a194 40ee		;								+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+a196 90ee		;								MM 		CHTOI_WORD				; Armazena o resultado
+a198 80f6		;								LD 		CHTOI_D2 				; Carrega o segundo digito
+d19a 6013		;								* 		CH_5 					; Multiplica por 0100H
+a19c 40ee		;								+		CHTOI_WORD 				; Soma-se com a variavel de saida
+a19e 90ee		;								MM 		CHTOI_WORD 				; Armazena o resultado
+a1a0 80f8		;								LD 		CHTOI_D3 				; Carrega o terceiro digito
+d1a2 6012		;								* 		CH_4 					; Multiplica por 0010H
+a1a4 40ee		;								+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+a1a6 90ee		;								MM 		CHTOI_WORD 				; Armazena o resultado
+a1a8 80fa		;								LD 		CHTOI_D4 				; Carrega o quarto digito
+a1aa 40ee		;								+ 		CHTOI_WORD 				; Soma-se com a variavel de saida
+a1ac 90ee		;								MM 		CHTOI_WORD 				; Salva o resultado
+a1ae b0fc		;								RS 		CHTOI 					; Saida da subrotina
+d1b0 8015		;	CHTOI_ERRO					LD 		CH_E 					; Carrega /FFFF (indica erro) no acumulador
+a1b2 b0fc		;								RS 		CHTOI 					; Sai do programa
