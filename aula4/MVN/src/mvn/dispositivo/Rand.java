@@ -33,8 +33,9 @@ public class Rand implements Dispositivo{
 
     @Override
     public Bits8 ler() throws MVNException {
-       Byte bytelido;
-       return s.nextBytes(bytelido);
+        byte[] bytegerado = new byte[1];
+        s.nextBytes(bytegerado);
+        return (Bits8)bytegerado[0];
     }
 
     @Override
