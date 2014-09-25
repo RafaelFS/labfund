@@ -33,19 +33,19 @@ public class Rand implements Dispositivo{
 
     @Override
     public Bits8 ler() throws MVNException {
-        byte[] bytegerado = new byte[1];
-        s.nextBytes(bytegerado);
-        return (Bits8)bytegerado[0];
+        Bits8 bytegerado= new Bits8();
+        s.nextBytes(bytegerado.toByteArray());
+        return bytegerado;
     }
 
     @Override
     public boolean podeLer() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
     public boolean podeEscrever() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -56,16 +56,22 @@ public class Rand implements Dispositivo{
 
     @Override
     public Bits8 skip(Bits8 val) throws MVNException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Bits8 byte_saida = new Bits8();
+        for (int i = 0; i < val.toInt(); i++) {
+            byte_saida = this.ler();
+        }
+        return byte_saida;
     }
 
     @Override
     public Bits8 position() throws MVNException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Bits8 byte_saida = new Bits8(0);
+        return  byte_saida;
     }
 
     @Override
     public Bits8 size() throws MVNException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Bits8 byte_saida = new Bits8(0);
+        return  byte_saida;
     }
 }
