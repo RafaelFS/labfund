@@ -193,7 +193,7 @@ public class GerenciadorDispositivos{
 	 * @throws MVNException
 	 *           Caso ocorra algum erro ao remover o dispositivo.
 	 */
-	private void addDispositivo(int deviceType, int logicalUnit,
+	public void addDispositivo(int deviceType, int logicalUnit,
 			Dispositivo newDevice) throws MVNException{
 		if(deviceType < 0 || deviceType >= MAX_DEVICETYPES){
 			throw new MVNException(ERR_INVALID_DEVICETYPE);
