@@ -113,6 +113,9 @@ public class GerenciadorDispositivos{
 	/** Tipos padrao de dispositivo: disco */
 	public static final int								TYPE_DISCO											= 3;
 	
+        /** Tipos padrao de dispositivo: Rand */
+	public static final int								TYPE_RAND											= 4;
+	
 	
 	/**
 	 * Instancia a classe criando uma tabela de dispositivos vazia.<br/>

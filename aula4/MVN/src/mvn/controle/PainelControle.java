@@ -461,7 +461,7 @@ public class PainelControle{
 	 * @param unidadeLogica
 	 *          Unidade lógica do dispositico a ser adicionado
 	 */
-	private void adicionaDispositivo(int tipo, int unidadeLogica){
+	public void adicionaDispositivo(int tipo, int unidadeLogica){
 		try{
 			// pega os parâmetros necessários para o dispositivo especificado, se
 			// houver
