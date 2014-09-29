@@ -237,7 +237,17 @@ public class GerenciadorDispositivos{
 		addDispositivo(deviceType, logicalUnit, device);
 	}
 	
-	
+	public void addDispSimples(int deviceType, int logicalUnit)throws MVNException {
+            if(deviceType == 0) {
+                addDispositivo(deviceType, logicalUnit, new Teclado());
+            }
+            else if(deviceType == 1){
+                addDispositivo(deviceType, logicalUnit, new Monitor());
+            }
+            else if (deviceType == 4){
+                addDispositivo(deviceType, logicalUnit, new Rand());
+            }
+        }
 	/**
 	 * Remove um dispositivo do gerenciador.<br/>
 	 * <br/>
