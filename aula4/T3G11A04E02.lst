@@ -1,6 +1,6 @@
 				;							@ 		/0000				; Inicio do programa em 0000
 0000 0006		;	INI						JP 		MAIN_OS				; Pula para a label MAIN_PACK
 0002 0002		;	LU						K 		/0002				; Parâmetro de unidade lógica para a função de adicionar dispostivo
-0004 0004		;	TYPE					K		/0004				; Parâmetro de tipo de dispostivo para a função de adicionar dispostivo
+0004 0003		;	TYPE					K		/0003				; Parâmetro de tipo de dispostivo para a função de adicionar dispostivo
 0006 f2ad		;	MAIN_OS					OS 		/02AD				; Instrução OS que chama a função de adicionar dispostivo 
 0008 c008		;	FIM						HM 		FIM					; FIM
