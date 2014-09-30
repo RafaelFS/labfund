@@ -311,6 +311,8 @@ public class Disco implements Dispositivo{
 	
 	@Override
 	public void reset() throws MVNException{
+            this.finalizeDevice();
+            this.initializeDevice();
 	}
 	
 	
@@ -322,6 +324,10 @@ public class Disco implements Dispositivo{
 	
 	@Override
 	public Bits8 skip(Bits8 val) throws MVNException{
-		return null;
+            Bits8 bitlido = new Bits8();
+            for (int i = 0; i < val.toInt(); i++) {
+                bitlido = this.ler();
+            }
+            return bitlido;
 	}
 } // Disco

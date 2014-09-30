@@ -237,6 +237,9 @@ public class GerenciadorDispositivos{
 		addDispositivo(deviceType, logicalUnit, device);
 	}
 	
+        /**
+        * Adiciona um dispositivo simples (teclado, monitor ou Rand)
+        */
 	public void addDispSimples(int deviceType, int logicalUnit)throws MVNException {
             if(deviceType == 0) {
                 addDispositivo(deviceType, logicalUnit, new Teclado());
@@ -436,7 +439,8 @@ public class GerenciadorDispositivos{
 	 */
 	public void reiniciarLeitura(int deviceType, int logicalUnit)
 			throws MVNException{
-	}
+            this.getDevice(deviceType, logicalUnit).reset();
+        }
 	
 	
 	/**
@@ -485,7 +489,7 @@ public class GerenciadorDispositivos{
 	 */
 	public Bits8 avancarLeitura(int deviceType, int logicalUnit, int val)
 			throws MVNException{
-		return null;
+		return getDevice(deviceType, logicalUnit).skip(new Bits8(val));
 	}
 	
 	

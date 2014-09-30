@@ -1,0 +1,5 @@
+				;							@ 		/0000				; Inicio do programa em 0000
+0000 0004		;	INI						JP 		reset				; Pula para a label MAIN_PACK
+0002 0000		;	LU 						K 		/0000
+0004 f1fa		;	reset  					OS 		/01FA
+0006 c006		;	FIM						HM 		FIM					; FIM

@@ -95,7 +95,7 @@ public interface Dispositivo{
 	 *           Caso haja um problema de entrada e saida ao executar comando.
 	 */
 	public void reset() throws MVNException;
-	
+            
 	
 	/**
 	 * Avança o cursor de leitura do dispositivo que pode ser lido em uma
