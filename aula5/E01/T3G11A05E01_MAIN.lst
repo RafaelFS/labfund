@@ -1,0 +1,33 @@
+; GETLINEF - MAIN 
+
+4000 0000 ; "GETLINEF<"		;	GETLINEF <
+4001 0000 ; "GL_END<"		;	GL_END <
+4002 0000 ; "GL_UL<"		;	GL_UL <
+4003 0000 ; "GL_BUF<"		;	GL_BUF <
+
+				;	&	/0000
+a000 001a		;	MAIN	JP	START
+
+8002 0000		;	VAL_UL	K	/0000		; UL do arquivo
+8004 000a		;	VAL_BUF	K	=10			; Tamanho do buffer
+8006 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   0
+8008 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   2
+800a 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   4
+800c 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   6
+800e 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   8
+8010 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   a
+8012 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   c
+8014 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   e
+8016 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   10
+8018 0000		;	BUFFER	$	=10			; Buffer: algumas posições reservadas   12
+				;	BUFFER	$	=10			; Buffer: algumas posições reservadas
+
+a01a 3006		;	START	LV	BUFFER 		; Param 1: endereço do buffer
+d01c 9001		;			MM	GL_END
+a01e 8002		;			LD	VAL_UL		; Param 2: unidade lógica
+d020 9002		;			MM	GL_UL
+a022 8004		;			LD	VAL_BUF		; Param 3: tamanho do buffer
+d024 9003		;			MM	GL_BUF
+d026 a000		;			SC	GETLINEF	; Chama subrotina
+a028 c028		;	END		HM	END			; fim do programa
+

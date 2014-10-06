@@ -8,10 +8,9 @@ GL_BUF <
 &	/0000
 MAIN	JP	START
 
-VAL_UL	K	/0001		; UL do arquivo
+VAL_UL	K	/0000		; UL do arquivo
 VAL_BUF	K	=10			; Tamanho do buffer
 BUFFER	$	=10			; Buffer: algumas posições reservadas
-
 
 START	LV	BUFFER 		; Param 1: endereço do buffer
 		MM	GL_END
