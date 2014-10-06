@@ -324,10 +324,16 @@ public class Disco implements Dispositivo{
 	
 	@Override
 	public Bits8 skip(Bits8 val) throws MVNException{
-            Bits8 bitlido = new Bits8();
-            for (int i = 0; i < val.toInt(); i++) {
-                bitlido = this.ler();
+            try{
+			if(podeLer()){
+				long bytespulados = inFile.skip(val.toInt());
+				return new Bits8((int)bytespulados);
+			}else{
+				// modo de operacao inadequado
+				throw new MVNException(ERR_WRITEONLYDEVICE, this);
+			}
+            }catch(IOException e){
+                throw new MVNException(ERR_IOERROR, arquivo.getName());
             }
-            return bitlido;
 	}
 } // Disco
