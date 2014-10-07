@@ -1,7 +1,7 @@
 						@ 		/0000				; Inicio do programa em 0000
 INI						JP 		RESET				; Pula para a label MAIN_PACK
 LU 						K 		/0000
-RESET 					OS 		/01FA
+RESET 					OS 		/01FF
 						JP  	SKIP
 NUM_SKIP 				K 		/0002
 LU_SKIP					K  		/0000

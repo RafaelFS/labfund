@@ -311,9 +311,15 @@ public class Disco implements Dispositivo{
 	
 	@Override
 	public void reset() throws MVNException{
-            this.finalizeDevice();
-            this.initializeDevice();
-	}
+            if(podeLer()){   
+                initializeDevice();
+                finalizeDevice();
+            }else{
+                // modo de operacao inadequado
+                throw new MVNException(ERR_WRITEONLYDEVICE, this);
+            }
+        }      
+        
 	
 	
 	@Override

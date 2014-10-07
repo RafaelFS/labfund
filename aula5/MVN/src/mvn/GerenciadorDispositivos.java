@@ -487,8 +487,7 @@ public class GerenciadorDispositivos{
 	 *           Caso o dispositivo nao aceite leitura ou caso haja um problema
 	 *           de entrada e saida ao executar comando.
 	 */
-	public Bits8 avancarLeitura(int deviceType, int logicalUnit, int val)
-			throws MVNException{
+	public Bits8 avancarLeitura(int deviceType, int logicalUnit, int val) throws MVNException{
 		return getDevice(deviceType, logicalUnit).skip(new Bits8(val));
 	}
 	
