@@ -312,8 +312,8 @@ public class Disco implements Dispositivo{
 	@Override
 	public void reset() throws MVNException{
             if(podeLer()){   
-                initializeDevice();
                 finalizeDevice();
+                initializeDevice();
             }else{
                 // modo de operacao inadequado
                 throw new MVNException(ERR_WRITEONLYDEVICE, this);
@@ -331,14 +331,14 @@ public class Disco implements Dispositivo{
 	@Override
 	public Bits8 skip(Bits8 val) throws MVNException{
             try{
-			if(podeLer()){
-				long bytespulados = inFile.skip(val.toInt());
-				return new Bits8((int)bytespulados);
-			}else{
-				// modo de operacao inadequado
-				throw new MVNException(ERR_WRITEONLYDEVICE, this);
-			}
-            }catch(IOException e){
+		if(podeLer()){
+                    long bytespulados = inFile.skip((long)val.toInt());
+                    return new Bits8((int)bytespulados);
+                }else{
+                    // modo de operacao inadequado
+                    throw new MVNException(ERR_WRITEONLYDEVICE, this);
+                }
+            } catch(IOException e){
                 throw new MVNException(ERR_IOERROR, arquivo.getName());
             }
 	}
