@@ -52,7 +52,7 @@
 8024 ffff		;	CH_E			K		/FFFF
 
 ; Constantes para a rotina GETLINEF
-8026 0a0d		;	EOL				K		/0A0D		; Fim da linha (codigo em ASCII)
+8026 0d0a		;	EOL				K		/0D0A		; Fim da linha (codigo em ASCII)
 8028 ffff		;	EOF				K		/FFFF		; Fim do arquivo
 802a 0000		;	EOS				K		/0000		; Fim da string
 802c d300		;	GD_VAZIA_D		GD 		/0300		; Get Data (do disco) vazia para criação de instrução dinamicamente

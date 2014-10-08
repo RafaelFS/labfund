@@ -446,28 +446,28 @@ a274 b1d4		;	ITOCH_FIM_DA_SUBROTINA		RS 		ITOCH
 
 ; Corpo da subrotina GETLINEF
 8280 0000		;	GETLINEF					K		/0000					; Inicio da subrotina GETLINEF (endereco reservado para retorno)
-a282 028a		;								JP      GETLINE_LOOP			; Pula para a o inicio do loop
+a282 029a		;								JP      GETLINE_LOOP			; Pula para a o inicio do loop
 a284 827e		;	GETLINE_FOR					LD 		GL_CONT					; Linha para incrementar o contador (similar a um comando for)
 d286 4007		;								+		INCREASE				; Incrementa
 a288 927e		;								MM 		GL_CONT					; Salva na memoria GL_CONT
-a28a 827a		;	GETLINE_LOOP				LD 		GL_UL					; Carrega UL (unidade logica)
-d28c 4022		;								+		GD_VAZIA_D				; Soma com a instrucao GD
-a28e 9292		;								MM 		GETLINEF_GD_D			; Salva na memoria para executar instrucao dinamica
-a290 827a		;								LD      GL_UL					; Carrega o valor da unidade logica novamente
-8292 0000		;	GETLINEF_GD_D				K		/0000					; GETDATA dinamico
-a294 927c		;								MM 		GL_PALAVRA				; Salva em GL_PALAVRA o que esta no acumulador
-a296 8276		;								LD 		GL_END					; Carrega o endereço do buffer
-d298 4004		;								+		MM_VAZIA				; Criação da instrução dinamica (MM dinamico)
-a29a 92a4		;								MM 		GETLINE_SALVA_BUFFER	; Salva na memoria GETLINE_SALVA_BUFFER
-a29c 8276		;								LD 		GL_END 					; Carrega o endereço do buffer
-d29e 4006		;								+		INC_ADDRESS 			; Incrementa o endereço (em /0002)
-a2a0 9276		;								MM 		GL_END 					; Salva o novo endereço
-a2a2 827c		;								LD 		GL_PALAVRA				; Carrega a palavra a ser salva pela instrução dinamica
-82a4 0000		;	GETLINE_SALVA_BUFFER		K		/0000 					; MM dinamico
+a28a 8276		;								LD 		GL_END					; Carrega o endereço do buffer
+d28c 4004		;								+		MM_VAZIA				; Criação da instrução dinamica (MM dinamico)
+a28e 9298		;								MM 		GETLINE_SALVA_BUFFER	; Salva na memoria GETLINE_SALVA_BUFFER
+a290 8276		;								LD 		GL_END 					; Carrega o endereço do buffer
+d292 4006		;								+		INC_ADDRESS 			; Incrementa o endereço (em /0002)
+a294 9276		;								MM 		GL_END 					; Salva o novo endereço
+a296 827c		;								LD 		GL_PALAVRA				; Carrega a palavra a ser salva pela instrução dinamica
+8298 0000		;	GETLINE_SALVA_BUFFER		K		/0000 					; MM dinamico
+a29a 827a		;	GETLINE_LOOP				LD 		GL_UL					; Carrega UL (unidade logica)
+d29c 4022		;								+		GD_VAZIA_D				; Soma com a instrucao GD
+a29e 92a2		;								MM 		GETLINEF_GD_D			; Salva na memoria para executar instrucao dinamica
+a2a0 827a		;								LD      GL_UL					; Carrega o valor da unidade logica novamente
+82a2 0000		;	GETLINEF_GD_D				K		/0000					; GETDATA dinamico
+a2a4 927c		;								MM 		GL_PALAVRA				; Salva em GL_PALAVRA o que esta no acumulador
 d2a6 5020		;								-		EOF 					; Subtrai por EOF (/FFFF)
 a2a8 12ba		;								JZ		GL_EOF 					; Se for igual a zero, pula para GL_EOF (detectou EOF)
 d2aa 4020		;								+		EOF 					; Senao, soma o valor EOF
-d2ac 5019		;								-		EOL 					; Subtrai o valor de EOL (/0A0D)
+d2ac 5019		;								-		EOL 					; Subtrai o valor de EOL (/0D0A)
 a2ae 12c8		;								JZ		GL_EOL 					; Se for igual a zero, pula para GL_EOL (detectou EOL)
 a2b0 827e		;								LD 		GL_CONT 				; Carrega o valor da variavel GL_CONT (contador)
 d2b2 4007		;								+		INCREASE 				; Incrementa em 1

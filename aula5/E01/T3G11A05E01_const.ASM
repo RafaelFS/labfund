@@ -52,7 +52,7 @@ CH_6 			K 		/1000
 CH_E			K		/FFFF
 
 ; Constantes para a rotina GETLINEF
-EOL				K		/0A0D		; Fim da linha (codigo em ASCII)
+EOL				K		/0D0A		; Fim da linha (codigo em ASCII)
 EOF				K		/FFFF		; Fim do arquivo
 EOS				K		/0000		; Fim da string
 GD_VAZIA_D		GD 		/0300		; Get Data (do disco) vazia para criação de instrução dinamicamente

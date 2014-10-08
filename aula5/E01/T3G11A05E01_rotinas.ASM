@@ -450,12 +450,6 @@ GETLINEF					K		/0000					; Inicio da subrotina GETLINEF (endereco reservado par
 GETLINE_FOR					LD 		GL_CONT					; Linha para incrementar o contador (similar a um comando for)
 							+		INCREASE				; Incrementa
 							MM 		GL_CONT					; Salva na memoria GL_CONT
-GETLINE_LOOP				LD 		GL_UL					; Carrega UL (unidade logica)
-							+		GD_VAZIA_D				; Soma com a instrucao GD
-							MM 		GETLINEF_GD_D			; Salva na memoria para executar instrucao dinamica
-							LD      GL_UL					; Carrega o valor da unidade logica novamente
-GETLINEF_GD_D				K		/0000					; GETDATA dinamico
-							MM 		GL_PALAVRA				; Salva em GL_PALAVRA o que esta no acumulador
 							LD 		GL_END					; Carrega o endereço do buffer
 							+		MM_VAZIA				; Criação da instrução dinamica (MM dinamico)
 							MM 		GETLINE_SALVA_BUFFER	; Salva na memoria GETLINE_SALVA_BUFFER
@@ -464,10 +458,16 @@ GETLINEF_GD_D				K		/0000					; GETDATA dinamico
 							MM 		GL_END 					; Salva o novo endereço
 							LD 		GL_PALAVRA				; Carrega a palavra a ser salva pela instrução dinamica
 GETLINE_SALVA_BUFFER		K		/0000 					; MM dinamico
+GETLINE_LOOP				LD 		GL_UL					; Carrega UL (unidade logica)
+							+		GD_VAZIA_D				; Soma com a instrucao GD
+							MM 		GETLINEF_GD_D			; Salva na memoria para executar instrucao dinamica
+							LD      GL_UL					; Carrega o valor da unidade logica novamente
+GETLINEF_GD_D				K		/0000					; GETDATA dinamico
+							MM 		GL_PALAVRA				; Salva em GL_PALAVRA o que esta no acumulador
 							-		EOF 					; Subtrai por EOF (/FFFF)
 							JZ		GL_EOF 					; Se for igual a zero, pula para GL_EOF (detectou EOF)
 							+		EOF 					; Senao, soma o valor EOF
-							-		EOL 					; Subtrai o valor de EOL (/0A0D)
+							-		EOL 					; Subtrai o valor de EOL (/0D0A)
 							JZ		GL_EOL 					; Se for igual a zero, pula para GL_EOL (detectou EOL)
 							LD 		GL_CONT 				; Carrega o valor da variavel GL_CONT (contador)
 							+		INCREASE 				; Incrementa em 1
