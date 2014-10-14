@@ -1,0 +1,8 @@
+				;			@ /0000 		; endereço absoluto
+0000 0004		;	JP 		INI 			; vai para início do programa
+0002 1234		;	VAL 	K 		/1234 	; valor a ser escrito no disco
+0004 8002		;	INI 	LD 		VAL 	; carrega valor no acumulador
+0006 e300		;			PD 		/300 	; escreve valor do acumulador no disco 
+						; cujo ID é 00 (operação de “append”)
+0008 c008		;	END 	HM 		END 	; fim
+				
