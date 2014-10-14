@@ -1,0 +1,67 @@
+; Subrotina DUMPER
+; Grava em arquivo toda a imagem binária da memória
+				;				&       /0000
+;Exportando DUMPER  ==================================================================
+201a 0000 ; "DUMPER>"		;	DUMPER 		>  
+200a 0000 ; "DUMP_INI>"		;	DUMP_INI 	>	; Endereço onde começa o dump
+200c 0000 ; "DUMP_TAM>"		;	DUMP_TAM 	>	; Numero total de palavras a serem "dumpadas"
+200e 0000 ; "DUMP_UL>"		;	DUMP_UL 	>	; Unidade logica do disco a ser usado
+2010 0000 ; "DUMP_BL>"		;	DUMP_BL 	>	; Tamanho do bloco
+2012 0000 ; "DUMP_EXE>"		;	DUMP_EXE 	>	; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+
+
+; Constantes usadas em DUMPER =========================================
+8000 0002		;	INC_ADDRESS		K		/0002		; Constante de incremento de endereço
+8002 1000		;	INVALID_ADDR	K		/1000       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+8004 8000		;	LD_VAZIA    	LD 		/0000		; Load vazia para criação de intruções dinamicamente
+8006 0001		;	INCREASE		K 		/0001		; Constante de decremento de contagem
+
+8008 e300		;	PD_DISCO_VAZIA	PD 		/300 		; Put Data apenas com o tipo disco especificado 
+
+; Variáveis de DUMPER ================================================================
+800a 0000		;	DUMP_INI 		K 		/0000			; Endereço onde começa o dump
+800c 0000		;	DUMP_TAM 		K 		/0000			; Numero total de palavras a serem "dumpadas"
+800e 0000		;	DUMP_UL 		K 		/0000			; Unidade logica do disco a ser usado
+8010 0000		;	DUMP_BL 		K 		/0000			; Tamanho do bloco
+8012 0000		;	DUMP_EXE 		K 		/0000			; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+8014 0000		;	DUMP_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
+8016 0000		;	DUMP_CONTADOR	K 		/0000
+8018 0000		;	DUMP_PD			K 		/0000
+
+801a 0000		;	DUMPER 			K 		/0000
+a01c 800a		;					LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
+a01e 9014		;					MM 		DUMP_END_ATUAL
+a020 800e		;					LD 		DUMP_UL			; Crio a instrução de PD com a Unidade Lógica atual
+a022 4008		;					+		PD_DISCO_VAZIA
+a024 9018		;					MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
+				
+a026 9044		;					MM 		DUMP_PD_LOOP	
+
+
+a028 902c		;					MM 		DUMP_SAVE_INI    ; DUMP da posição inicial	
+a02a 800a		;					LD 		DUMP_INI
+802c 0000		;	DUMP_SAVE_INI	K 		/0000			
+				
+a02e 8018		;					LD 		DUMP_PD				; DUMP do numero total de palavras	
+a030 9034		;					MM 		DUMP_SAVE_TAM    
+a032 800c		;					LD 		DUMP_TAM
+8034 0000		;	DUMP_SAVE_TAM	K 		/0000		
+
+										; Salvo a instrução de dump no 
+
+a036 8016		;	DUMP_LOOP		LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual ao tamanho DUMP_TAM. Se é igual, então acabou e vai para o final da Subrotina
+a038 500c		;					-		DUMP_TAM		
+a03a 1054		;					JZ 		DUMP_FIM		
+a03c 8014		;					LD		DUMP_END_ATUAL	; Se não acabou, pego o valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
+a03e 4004		;					+		LD_VAZIA
+a040 9042		;					MM 		DUMP_GET_VALOR
+8042 0000		;	DUMP_GET_VALOR	K		/0000			
+8044 0000		;	DUMP_PD_LOOP	K		/0000			; Salvo no disco
+a046 8014		;					LD		DUMP_END_ATUAL  ; Incremento o endereço atual
+a048 4000		;					+		INC_ADDRESS
+a04a 9014		;					MM 		DUMP_END_ATUAL
+a04c 8016		;					LD 		DUMP_CONTADOR	; Incremento o contador e volto ao início
+a04e 4006		;					+		INCREASE 	
+a050 9016		;					MM 		DUMP_CONTADOR
+a052 0036		;					JP 		DUMP_LOOP
+a054 b01a		;	DUMP_FIM		RS 		DUMPER
