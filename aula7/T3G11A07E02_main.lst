@@ -12,7 +12,7 @@ a000 000c		;	MAIN			JP	START	; Salta para início do main
 ; PARAMETROS
 8002 0400		;	END_INICIAL		K	/0400	; Endereço onde começa o dump
 8004 0032		;	TAMANHO_TEST	K	/0032	; Numero total de palavras a serem "dumpadas"
-8006 0000		;	UL_TEST			K	/0000	; Unidade logica do disco a ser usado
+8006 0001		;	UL_TEST			K	/0001	; Unidade logica do disco a ser usado
 8008 0010		;	BL_TEST 		K	/0010	; Tamanho do bloco
 800a 0400		;	EXE_TEST 		K	/0400	; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
 
