@@ -1,0 +1,45 @@
+; Subrotina DUMPER
+; Grava em arquivo toda a imagem binária da memória
+				;				&       /0000
+;Exportando DUMPER  ==================================================================
+2014 0000 ; "DUMPER>"		;	DUMPER 		>  
+2000 0000 ; "DUMP_INI>"		;	DUMP_INI 	>	; Endereço onde começa o dump
+2002 0000 ; "DUMP_TAM>"		;	DUMP_TAM 	>	; Numero total de palavras a serem "dumpadas"
+2004 0000 ; "DUMP_UL>"		;	DUMP_UL 	>	; Unidade logica do disco a ser usado
+2006 0000 ; "DUMP_BL>"		;	DUMP_BL 	>	; Tamanho do bloco
+2008 0000 ; "DUMP_EXE>"		;	DUMP_EXE 	>	; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+
+; Variáveis de DUMPER ================================================================
+8000 0000		;	DUMP_INI 		K 		/0000			; Endereço onde começa o dump
+8002 0000		;	DUMP_TAM 		K 		/0000			; Numero total de palavras a serem "dumpadas"
+8004 0000		;	DUMP_UL 		K 		/0000			; Unidade logica do disco a ser usado
+8006 0000		;	DUMP_BL 		K 		/0000			; Tamanho do bloco
+8008 0000		;	DUMP_EXE 		K 		/0000			; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+800a 0000		;	DUMP_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
+; Constantes usadas em DUMPER
+800c 0002		;	INC_ADDRESS		K		/0002		; Constante de incremento de endereço
+800e 1000		;	INVALID_ADDR	K		/1000       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+8010 8000		;	LD_VAZIA    	LD 		/0000		; Load vazia para criação de intruções dinamicamente
+
+8012 e300		;	PD_DISCO_VAZIA	PD 		/300 		; Put Data apenas com o tipo disco especificado 
+
+
+8014 0000		;	DUMPER 			K 		/0000
+a016 8000		;					LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
+a018 900a		;					MM 		DUMP_END_ATUAL
+a01a 8004		;					LD 		DUMP_UL			; Crio a instrução de PD com o a Unidade Lógica atual
+a01c 4012		;					+		PD_DISCO_VAZIA
+a01e 902e		;					MM 		DUMP_PD
+a020 800a		;	DUMP_LOOP		LD		DUMP_END_ATUAL 	; Pego o Endereço atual e verifico se é igual ao endereço invalido. Se é igual, então acabou e vai para o final da Subrotina
+a022 500e		;					-		INVALID_ADDR		
+a024 1038		;					JZ 		DUMP_FIM		
+a026 800a		;					LD		DUMP_END_ATUAL	; Se não acabou, pego o valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
+a028 4010		;					+		LD_VAZIA
+a02a 902c		;					MM 		DUMP_GET_VALOR
+802c 0000		;	DUMP_GET_VALOR	K		/0000			
+802e 0000		;	DUMP_PD			K		/0000			; Salvo no disco
+a030 800a		;					LD 		DUMP_END_ATUAL	; Incremento o endereço e volto ao início
+a032 400c		;					+		INC_ADDRESS 	
+a034 900a		;					MM 		DUMP_END_ATUAL
+a036 0020		;					JP 		DUMP_LOOP
+a038 b014		;	DUMP_FIM		RS 		DUMPER
