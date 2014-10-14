@@ -27,6 +27,7 @@ DUMP_EXE 		K 		/0000			; Endereço onde começaria a execução (valor dummy, ap
 DUMP_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
 DUMP_CONTADOR	K 		/0000
 DUMP_PD			K 		/0000
+DUMP_CHKSUM		K		/0000
 
 DUMPER 			K 		/0000
 				LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
@@ -47,15 +48,25 @@ DUMP_SAVE_INI	K 		/0000
 				LD 		DUMP_TAM
 DUMP_SAVE_TAM	K 		/0000		
 
-										; Salvo a instrução de dump no 
+										
 
-DUMP_LOOP		LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual ao tamanho DUMP_TAM. Se é igual, então acabou e vai para o final da Subrotina
+DUMP_LOOP_BLOCK LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual ao tamanho DUMP_TAM. Se é igual, então acabou e vai para o final da Subrotina
 				-		DUMP_TAM		
 				JZ 		DUMP_FIM		
+
+				LV		/0000			; Se não acabou, zero o CHECKSUM
+				MM 		CHECKSUM
+
+				LD 		DUMP_PD			; Dou dump no endereço atual (endereço inicial do bloco)
+				MM 		DUMP_SAVE_ADDR    
+				LD 		DUMP_END_ATUAL
+DUMP_SAVE_ADDR	K 		/0000
+
 				LD		DUMP_END_ATUAL	; Se não acabou, pego o valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
 				+		LD_VAZIA
 				MM 		DUMP_GET_VALOR
-DUMP_GET_VALOR	K		/0000			
+DUMP_GET_VALOR	K		/0000		
+
 DUMP_PD_LOOP	K		/0000			; Salvo no disco
 				LD		DUMP_END_ATUAL  ; Incremento o endereço atual
 				+		INC_ADDRESS
@@ -63,6 +74,6 @@ DUMP_PD_LOOP	K		/0000			; Salvo no disco
 				LD 		DUMP_CONTADOR	; Incremento o contador e volto ao início
 				+		INCREASE 	
 				MM 		DUMP_CONTADOR
-				JP 		DUMP_LOOP
+				JP 		DUMP_LOOP_BLOCK
 DUMP_FIM		RS 		DUMPER
 				#		DUMPER
