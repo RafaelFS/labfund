@@ -2,55 +2,91 @@
 ; Grava na memória os dados presentes em um arquivo
 				;						&       /0000
 ;Exportando LOADER  ==================================================================
-201e 0000 ; "LOADER>"		;	LOADER 		>  
+2020 0000 ; "LOADER>"		;	LOADER 		>  
 2000 0000 ; "LOADER_UL>"		;	LOADER_UL 	>	
 
 
 ; Variáveis de LOADER ================================================================
-8000 0000		;	LOADER_UL 			K 		/0000			; Unidade logica do disco a ser lido
-8002 0000		;	LOADER_INI 			K 		/0000			; Endereço onde começa o load
-8004 0000		;	LOADER_TAM 			K 		/0000			; Numero total de palavras a serem lidas
-8006 0000		;	LOADER_BL 			K 		/0000			; Tamanho do bloco
-8008 0000		;	LOADER_EXE 			K 		/0000			; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
-800a 0000		;	LOADER_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
-800c 0000		;	LOADER_CONTADOR		K 		/0000			; Contador que armazena o número de palavras a serem lidas
-800e 0000		;	LOADER_GD  			K		/0000			; Intrução de Get Data montada com a unidade lógica atual
-8010 0000		;	LOADER_OUT			K 		/0000			; Mensagem de saída do loader
+8000 0000		;	LOADER_UL 			K 		/0000				; Unidade logica do disco a ser lido
+8002 0000		;	LOADER_INI 			K 		/0000				; Endereço onde começa o load
+8004 0000		;	LOADER_TAM 			K 		/0000				; Numero total de palavras a serem lidas
+8006 0000		;	LOADER_BL 			K 		/0000				; Tamanho do bloco
+8008 0000		;	LOADER_EXE 			K 		/0000				; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+800a 0000		;	LOADER_END_ATUAL	K 		/0000				; Endereço atual que será "dumpado"
+800c 0000		;	LOADER_CONTADOR		K 		/0000				; Contador que armazena o número de palavras a serem lidas
+800e 0000		;	LOADER_GD  			K		/0000				; Intrução de Get Data montada com a unidade lógica atual
+8010 0000		;	LOADER_OUT			K 		/0000				; Mensagem de saída do loader
 
 ; Constantes usadas em LOADER
-8012 0002		;	INC_ADDRESS			K		/0002		; Constante de incremento de endereço
-8014 1000		;	INVALID_ADDR		K		/1000       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
-8016 8000		;	LD_VAZIA    		LD 		/0000		; Load vazia para criação de intruções dinamicamente
-8018 0001		;	INCREASE			K 		/0001		; Constante de decremento de contagem
+8012 0002		;	INC_ADDRESS			K		/0002				; Constante de incremento de endereço
+8014 1000		;	INVALID_ADDR		K		/1000       		; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+8016 8000		;	LD_VAZIA    		LD 		/0000				; Load vazia para criação de intruções dinamicamente
+8018 9000		;	MM_VAZIA			MM      /0000		; Move to memory vazia para criação de instrução dinamicamente
+801a 0001		;	INCREASE			K 		/0001				; Constante de decremento de contagem
+			
+801c d300		;	GD_VAZIA_D			GD 		/300 				; Get Data apenas com o tipo disco especificado 
+801e fffe		;	NAO_CABE			K 		/FFFE			
 	
-801a d300		;	GD_VAZIA_D			GD 		/300 		; Get Data apenas com o tipo disco especificado 
-801c fffe		;	NAO_CABE			K 		/FFFE			
+8020 0000		;	LOADER				K 		/0000
+a022 8000		;						LD 		LOADER_UL			; Crio a instrução de GD com a Unidade Lógica atual
+a024 401c		;						+		GD_VAZIA_D		
+a026 900e		;						MM 		LOADER_GD       	; Salvo-a em todos os lugares em que ela é usada
+		
+a028 800e		;						LD 		LOADER_GD 			; Obtenho do arquivo o endereço inicial e salvo na variável correspondente
+a02a 902c		;						MM      LOADER_GET_INI			
+802c 0000		;	LOADER_GET_INI		K		/0000				
+a02e 9002		;						MM 		LOADER_INI	
 	
-801e 0000		;	LOADER				K 		/0000
-a020 8000		;						LD 		LOADER_UL		; Crio a instrução de GD com a Unidade Lógica atual
-a022 401a		;						+		GD_VAZIA_D	
-a024 900e		;						MM 		LOADER_GD       ; Salvo-a em todos os lugares em que ela é usada
+a030 800e		;						LD 		LOADER_GD 			; Obtenho do arquivo o numero total de palavras e salvo na variável correspondente
+a032 9034		;						MM      LOADER_GET_TAM			
+8034 0000		;	LOADER_GET_TAM		K		/0000				
+a036 9004		;						MM 		LOADER_TAM	
 	
-a026 800e		;						LD 		LOADER_GD 		; Obtenho do arquivo o endereço inicial e salvo na variável correspondente
-a028 902a		;						MM      LOADER_SAVE_INI		
-802a 0000		;	LOADER_SAVE_INI		K		/0000			
-a02c 9002		;						MM 		LOADER_INI
+a038 801e		;						LD 		NAO_CABE			; Inicio saída com a mensagem que não cabe
+a03a 9010		;						MM 		LOADER_OUT      	
+a03c 8004		;						LD 		LOADER_TAM 			; Comparo o ultimo endereço a ser ocupado (endereço inicial + (nwords-1)*espaço_de_um_endereço) com o endereço invalido...
+a03e 501a		;						-       INCREASE	
+a040 6012		;						*		INC_ADDRESS	
+a042 4002		;						+		LOADER_INI	
+a044 5014		;						- 		INVALID_ADDR	
+a046 204a		;						JN		LOADER_COUBE		; Se for menor, cabe
+a048 0072		;						JP		LOADER_FIM			; Se não, pulo para o fim
+	
+a04a 8004		;	LOADER_COUBE		LD  	LOADER_TAM 			; Inicio o contador com o número total de words
+a04c 900c		;						MM 		LOADER_CONTADOR	
+a04e 8002		;						LD 		LOADER_INI 			; Inicio o endereço atual com o endereço inicial
+a050 900a		;						MM 		LOADER_END_ATUAL	 	
+	
+a052 800c		;	LOADER_LOOP_FILE	LD 		LOADER_CONTADOR 	; Verifico se o contador é zero. Se for, vou para o fim          
+a054 1072		;						JZ		LOADER_FIM	
+a056 800e		;						LD      LOADER_GD			; Senão, salvo a palavra atual no endereço atual
+a058 9060		;						MM 		LOADER_GET_WORD
+a05a 800a		;						LD 		LOADER_END_ATUAL
+a05c 4018		;						+ 		MM_VAZIA
+a05e 9062		;						MM 		LOADER_SAVE_WORD
+8060 0000		;	LOADER_GET_WORD     K		/0000				; Para tanto, uso GD e MM criadas dinamicamente	
+8062 0000		;	LOADER_SAVE_WORD	K  		/0000
+a064 800a		;						LD 		LOADER_END_ATUAL	; Atualizo o endereço e o contador
+a066 4012		;						+ 		INC_ADDRESS
+a068 900a		;						MM 		LOADER_END_ATUAL
+a06a 800c		;						LD 		LOADER_CONTADOR
+a06c 501a		;						-		INCREASE
+a06e 900c		;						MM 		LOADER_CONTADOR
+a070 0052		;						JP      LOADER_LOOP_FILE 	; Retorno ao inicio do loop do arquivo
 
-a02e 800e		;						LD 		LOADER_GD 		; Obtenho do arquivo o numero total de palavras e salvo na variável correspondente
-a030 9032		;						MM      LOADER_SAVE_TAM		
-8032 0000		;	LOADER_SAVE_TAM		K		/0000			
-a034 9004		;						MM 		LOADER_TAM
 
-a036 801c		;						LD 		NAO_CABE		; Inicio saída com a mensagem que não cabe
-a038 9010		;						MM 		LOADER_OUT      
-a03a 8004		;						LD 		LOADER_TAM 		; Comparo o ultimo endereço a ser ocupado (endereço inicial + (nwords-1)*espaço_de_um_endereço) com o endereço invalido...
-a03c 5018		;						-       INCREASE
-a03e 6012		;						*		INC_ADDRESS
-a040 4002		;						+		LOADER_INI
-a042 5014		;						- 		INVALID_ADDR
-a044 2048		;						JN		LOADER_COUBE	; Se for menor, cabe
-a046 004c		;						JP		LOADER_FIM		; Se não, pulo para o fim
-8048 3aaa		;	LOADER_COUBE		LV 		/AAA
-a04a 9010		;						MM 		LOADER_OUT
-a04c 8010		;	LOADER_FIM			LD 		LOADER_OUT
-a04e b01e		;						RS 		LOADER
+
+a072 8010		;	LOADER_FIM			LD 		LOADER_OUT
+a074 b020		;						RS 		LOADER
+
+; Subrotina WDIR  ============
+; Salva o valor presente em  WDIR_IN no endereço presente no Acumulador 
+
+8076 0000		;	WDIR_IN		K	/0000 		; Valor a ser salvo no endereço presente no Acumulador
+8078 0000		;	WDIR		K	/0000 		; Endereço reservado para retorno da subrotina
+a07a 4018		;				+	MM_VAZIA 	; Crio a instrução de salvar na memória destino dinamicamente e coloco em WDIR_SALVA
+a07c 9080		;				MM	WDIR_SALVA
+a07e 8076		;				LD	WDIR_IN		; Coloco o valor de entrada no Acumulador e salvo no endereço destino
+8080 0000		;	WDIR_SALVA  K	/0000
+a082 b078		;	FIM_DE_WDIR	RS 	WDIR
+
