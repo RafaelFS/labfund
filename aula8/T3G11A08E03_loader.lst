@@ -1,0 +1,121 @@
+; Subrotina LOADER
+; Grava na memória os dados presentes em um arquivo
+				;						&       /0000
+;Exportando LOADER  ==================================================================
+2028 0000 ; "LOADER>"		;	LOADER 		>  
+2000 0000 ; "LOADER_UL>"		;	LOADER_UL 	>	
+
+
+; Variáveis de LOADER ================================================================
+8000 0000		;	LOADER_UL 			K 		/0000				; Unidade logica do disco a ser lido
+8002 0000		;	LOADER_INI 			K 		/0000				; Endereço onde começa o load
+8004 0000		;	LOADER_TAM 			K 		/0000				; Numero total de palavras a serem lidas
+8006 0000		;	LOADER_BL 			K 		/0000				; Tamanho do bloco
+8008 0000		;	LOADER_EXE 			K 		/0000				; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+800a 0000		;	LOADER_END_ATUAL	K 		/0000				; Endereço atual que será "dumpado"
+800c 0000		;	LOADER_CONTADOR		K 		/0000				; Contador que armazena o número de palavras a serem lidas
+800e 0000		;	LOADER_GD  			K		/0000				; Intrução de Get Data montada com a unidade lógica atual
+8010 0000		;	LOADER_OUT			K 		/0000				; Mensagem de saída do loader
+8012 0000		;	LOADER_CS_OBTIDO	K 		/0000				; Checksum calculado pelo loader
+8014 0000		;	LOADER_CS_ORIGINAL	K		/0000				; Checksum fornecido no arquivo de dump
+8016 0000		;	LOADER_END_BLOCO	K 		/0000				; Salva o endereço inicial do bloco atual
+; Constantes usadas em LOADER ===============================================
+8018 0002		;	INC_ADDRESS			K		/0002				; Constante de incremento de endereço
+801a 1000		;	INVALID_ADDR		K		/1000       		; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+801c 8000		;	LD_VAZIA    		LD 		/0000				; Load vazia para criação de intruções dinamicamente
+801e 9000		;	MM_VAZIA			MM      /0000				; Move to memory vazia para criação de instrução dinamicamente
+8020 0001		;	INCREASE			K 		/0001				; Constante de decremento de contagem
+			
+8022 d300		;	GD_VAZIA_D			GD 		/300 				; Get Data apenas com o tipo disco especificado 
+8024 fffe		;	NAO_CABE			K 		/FFFE				; Mensagem de erro que indica que o dump não cabe na memória
+8026 fffc		;	NAO_CONFERE			K 		/FFFC				; Mensagem de erro que indica que o checksum não confere
+	
+8028 0000		;	LOADER				K 		/0000
+a02a 8000		;						LD 		LOADER_UL				; Crio a instrução de GD com a Unidade Lógica atual
+a02c 4022		;						+		GD_VAZIA_D			
+a02e 900e		;						MM 		LOADER_GD       		; Salvo-a em todos os lugares em que ela é usada
+			
+a030 800e		;						LD 		LOADER_GD 				; Obtenho do arquivo o endereço inicial e salvo na variável correspondente
+a032 9034		;						MM      LOADER_GET_INI				
+8034 0000		;	LOADER_GET_INI		K		/0000					
+a036 9002		;						MM 		LOADER_INI		
+		
+a038 800e		;						LD 		LOADER_GD 				; Obtenho do arquivo o numero total de palavras e salvo na variável correspondente
+a03a 903c		;						MM      LOADER_GET_TAM				
+803c 0000		;	LOADER_GET_TAM		K		/0000					
+a03e 9004		;						MM 		LOADER_TAM		
+		
+a040 8024		;						LD 		NAO_CABE				; Inicio saída com a mensagem que não cabe
+a042 9010		;						MM 		LOADER_OUT      		
+a044 8004		;						LD 		LOADER_TAM 				; Comparo o ultimo endereço a ser ocupado (endereço inicial + (nwords-1)*espaço_de_um_endereço) com o endereço invalido...
+a046 5020		;						-       INCREASE		
+a048 6018		;						*		INC_ADDRESS		
+a04a 4002		;						+		LOADER_INI		
+a04c 501a		;						- 		INVALID_ADDR		
+a04e 2052		;						JN		LOADER_COUBE			; Se for menor, cabe
+a050 00b4		;						JP		LOADER_FIM				; Se não, pulo para o fim
+		
+a052 8004		;	LOADER_COUBE		LD  	LOADER_TAM 				; Inicio o contador com o número total de words
+a054 900c		;						MM 		LOADER_CONTADOR		
+a056 8002		;						LD 		LOADER_INI 				; Inicio o endereço atual com o endereço inicial
+a058 900a		;						MM 		LOADER_END_ATUAL		 	
+		
+a05a 800c		;	LOADER_LOOP_FILE	LD 		LOADER_CONTADOR 		; Verifico se o contador é zero. Se for, vou para o fim          
+a05c 10ac		;						JZ		LOADER_FIM_OK		
+													; Senão, inicio o salvar do proximo bloco
+805e 3000		;	LOADER_BLOCK_START	LV 		/0000					; Reseto o checksum calculado
+a060 9012		;						MM      LOADER_CS_OBTIDO    	
+	
+a062 800e		;						LD 		LOADER_GD 				; Obtenho o endereço inicial do bloco
+a064 9066		;						MM      LOADER_GET_BLK_END				
+8066 0000		;	LOADER_GET_BLK_END	K		/0000					
+a068 9016		;						MM 		LOADER_END_BLOCO	
+															
+a06a 800e		;						LD 		LOADER_GD 				; Obtenho o tamanho do bloco
+a06c 906e		;						MM      LOADER_GET_BLK_TAM				
+806e 0000		;	LOADER_GET_BLK_TAM	K		/0000					
+a070 9006		;						MM 		LOADER_BL
+
+a072 8016		;						LD 		LOADER_END_BLOCO 		; Seto o endereço atual com o endereço inicial do bloco
+a074 900a		;						MM 		LOADER_END_ATUAL
+
+a076 800e		;	LOADER_BLK_LOOP		LD      LOADER_GD				; Vou ler os dados do bloco
+a078 9080		;						MM 		LOADER_GET_WORD	
+a07a 800a		;						LD 		LOADER_END_ATUAL	
+a07c 401e		;						+ 		MM_VAZIA	
+a07e 9082		;						MM 		LOADER_SAVE_WORD	
+8080 0000		;	LOADER_GET_WORD     K		/0000					; Para tanto, uso GD e MM criadas dinamicamente	
+8082 0000		;	LOADER_SAVE_WORD	K  		/0000	
+a084 9010		;						MM 		LOADER_OUT 				; Salvo o valor atual como saída da subrotina
+					
+a086 4012		;						+ 		LOADER_CS_OBTIDO 		; Adiciono o valor atual ao Checksum
+a088 9012		;						MM 		LOADER_CS_OBTIDO
+
+a08a 800a		;						LD 		LOADER_END_ATUAL		; Atualizo o endereço, o contador e o tamanho do bloco restante
+a08c 4018		;						+ 		INC_ADDRESS	
+a08e 900a		;						MM 		LOADER_END_ATUAL	
+a090 800c		;						LD 		LOADER_CONTADOR	
+a092 5020		;						-		INCREASE	
+a094 900c		;						MM 		LOADER_CONTADOR	
+a096 8006		;						LD 		LOADER_BL
+a098 5020		;						- 		INCREASE
+a09a 9006		;						MM 		LOADER_BL
+
+a09c 8006		;						LD 		LOADER_BL 				; Se tamanho do bloco restante é 0, pulo para o fim do bloco 
+a09e 10a2		;						JZ 		LOADER_BLK_END						
+a0a0 0076		;						JP 		LOADER_BLK_LOOP         ; Senão, continuo a ler os dados do bloco
+a0a2 800e		;	LOADER_BLK_END		LD 		LOADER_GD				; Antes de terminar, pego o checksum indicado no arquivo
+a0a4 90a6		;						MM      LOADER_GET_CS				
+80a6 0000		;	LOADER_GET_CS		K		/0000					
+a0a8 9014		;						MM 		LOADER_CS_ORIGINAL
+a0aa 005a		;						JP      LOADER_LOOP_FILE 		; Retorno ao inicio do loop do arquivo
+	
+a0ac 800e		;	LOADER_FIM_OK  	 	LD 		LOADER_GD				; Antes de terminar, pego o endereço da primeira instrução executável
+a0ae 90b0		;						MM      LOADER_GET_EXE				
+80b0 0000		;	LOADER_GET_EXE		K		/0000					
+a0b2 9010		;						MM 		LOADER_OUT
+
+a0b4 8010		;	LOADER_FIM			LD 		LOADER_OUT	
+a0b6 b028		;						RS 		LOADER	
+	
+	
