@@ -27,15 +27,20 @@ DUMP_EXE 		K 		/0000			; Endereço onde começaria a execução (valor dummy, ap
 DUMP_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
 DUMP_CONTADOR	K 		/0000
 DUMP_PD			K 		/0000
-DUMP_CHKSUM		K		/0000
+DUMP_CHECKSUM	K		/0000
+DUMP_BL_ATUAL	K		/0000
 
 DUMPER 			K 		/0000
 				LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
 				MM 		DUMP_END_ATUAL
+				
+				LD 		DUMP_TAM		; Pego o numero de palavras e guardo como contador atual
+				MM 		DUMP_CONTADOR
+
 				LD 		DUMP_UL			; Crio a instrução de PD com a Unidade Lógica atual
 				+		PD_DISCO_VAZIA
-				MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
 				
+				MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
 				MM 		DUMP_PD_LOOP	
 
 
@@ -50,30 +55,61 @@ DUMP_SAVE_TAM	K 		/0000
 
 										
 
-DUMP_LOOP_BLOCK LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual ao tamanho DUMP_TAM. Se é igual, então acabou e vai para o final da Subrotina
-				-		DUMP_TAM		
+DUMP_LOOP_DUMP  LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual a 0. Se é igual, então acabou e vai para o final da Subrotina		
 				JZ 		DUMP_FIM		
 
 				LV		/0000			; Se não acabou, zero o CHECKSUM
-				MM 		CHECKSUM
+				MM 		DUMP_CHECKSUM
 
 				LD 		DUMP_PD			; Dou dump no endereço atual (endereço inicial do bloco)
 				MM 		DUMP_SAVE_ADDR    
 				LD 		DUMP_END_ATUAL
 DUMP_SAVE_ADDR	K 		/0000
 
-				LD		DUMP_END_ATUAL	; Se não acabou, pego o valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
+				LD 		DUMP_CONTADOR		; Se contador < tamanho do bloco (DUMP_BL) o tamanho é o proprio contador. Se não, é o tamanho max DUMP_BL
+				- 		DUMP_BL
+				JN		DUMP_BMIN	
+				
+				LD 		DUMP_PD			; Se estou aqui, contador > bloco e dumpo o tamanho do bloco max
+				MM 		DUMP_SAVE_BMAX    
+				LD 		DUMP_BL
+DUMP_SAVE_BMAX	K 		/0000
+				LD 	 	DUMP_BL
+				MM 		DUMP_BL_ATUAL
+				JP		DUMP_BLK_LOOP	
+
+DUMP_BMIN 		LD 		DUMP_PD			; Se estou aqui, contador < bloco e dumpo o tamanho do contador e o salvo como tamanho do bloco
+				MM 		DUMP_SAVE_BMIN    
+				LD 		DUMP_CONTADOR
+DUMP_SAVE_BMIN	K 		/0000
+				LD 		DUMP_CONTADOR
+				MM 		DUMP_BL_ATUAL
+
+DUMP_BLK_LOOP	LD 		DUMP_BL_ATUAL ; Se DUMP_BL_ATUAL for 0, já li todo o bloco e volto para iniciar outro bloco		
+				JZ		DUMP_LOOP_DUMP
+
+				LD		DUMP_END_ATUAL	; Pego no valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
 				+		LD_VAZIA
 				MM 		DUMP_GET_VALOR
 DUMP_GET_VALOR	K		/0000		
+DUMP_PD_LOOP	K		/0000			; Salvo esse valor no disco com a instrução gerada no início
 
-DUMP_PD_LOOP	K		/0000			; Salvo no disco
+				+		DUMP_CHECKSUM 	; Somo esse valor com CHECKSUM e salvo o novo CHECKSUM
+				MM 		DUMP_CHECKSUM 	
+
 				LD		DUMP_END_ATUAL  ; Incremento o endereço atual
 				+		INC_ADDRESS
 				MM 		DUMP_END_ATUAL
-				LD 		DUMP_CONTADOR	; Incremento o contador e volto ao início
-				+		INCREASE 	
+
+				LD 		DUMP_BL_ATUAL	; Decremento o tamanho do bloco 
+				-		INCREASE
+				MM      DUMP_BL_ATUAL
+
+				LD 		DUMP_CONTADOR	; Decremento o contador geral e volto ao início
+				-		INCREASE 	
 				MM 		DUMP_CONTADOR
-				JP 		DUMP_LOOP_BLOCK
+				
+				JP 		DUMP_BLK_LOOP
+
 DUMP_FIM		RS 		DUMPER
 				#		DUMPER

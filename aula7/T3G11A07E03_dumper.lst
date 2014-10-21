@@ -2,7 +2,7 @@
 ; Grava em arquivo toda a imagem binária da memória
 				;				&       /0000
 ;Exportando DUMPER  ==================================================================
-201a 0000 ; "DUMPER>"		;	DUMPER 		>  
+201e 0000 ; "DUMPER>"		;	DUMPER 		>  
 200a 0000 ; "DUMP_INI>"		;	DUMP_INI 	>	; Endereço onde começa o dump
 200c 0000 ; "DUMP_TAM>"		;	DUMP_TAM 	>	; Numero total de palavras a serem "dumpadas"
 200e 0000 ; "DUMP_UL>"		;	DUMP_UL 	>	; Unidade logica do disco a ser usado
@@ -27,41 +27,88 @@
 8014 0000		;	DUMP_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
 8016 0000		;	DUMP_CONTADOR	K 		/0000
 8018 0000		;	DUMP_PD			K 		/0000
+801a 0000		;	DUMP_CHECKSUM	K		/0000
+801c 0000		;	DUMP_BL_ATUAL	K		/0000
 
-801a 0000		;	DUMPER 			K 		/0000
-a01c 800a		;					LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
-a01e 9014		;					MM 		DUMP_END_ATUAL
-a020 800e		;					LD 		DUMP_UL			; Crio a instrução de PD com a Unidade Lógica atual
-a022 4008		;					+		PD_DISCO_VAZIA
-a024 9018		;					MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
+801e 0000		;	DUMPER 			K 		/0000
+a020 800a		;					LD 		DUMP_INI		; Pego o Endereço inicial e guardo como o endereço atual
+a022 9014		;					MM 		DUMP_END_ATUAL
 				
-a026 9044		;					MM 		DUMP_PD_LOOP	
+a024 800c		;					LD 		DUMP_TAM		; Pego o numero de palavras e guardo como contador atual
+a026 9016		;					MM 		DUMP_CONTADOR
 
-
-a028 902c		;					MM 		DUMP_SAVE_INI    ; DUMP da posição inicial	
-a02a 800a		;					LD 		DUMP_INI
-802c 0000		;	DUMP_SAVE_INI	K 		/0000			
+a028 800e		;					LD 		DUMP_UL			; Crio a instrução de PD com a Unidade Lógica atual
+a02a 4008		;					+		PD_DISCO_VAZIA
 				
-a02e 8018		;					LD 		DUMP_PD				; DUMP do numero total de palavras	
-a030 9034		;					MM 		DUMP_SAVE_TAM    
-a032 800c		;					LD 		DUMP_TAM
-8034 0000		;	DUMP_SAVE_TAM	K 		/0000		
+a02c 9018		;					MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
+a02e 907a		;					MM 		DUMP_PD_LOOP	
 
-										; Salvo a instrução de dump no 
 
-a036 8016		;	DUMP_LOOP		LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual ao tamanho DUMP_TAM. Se é igual, então acabou e vai para o final da Subrotina
-a038 500c		;					-		DUMP_TAM		
-a03a 1054		;					JZ 		DUMP_FIM		
-a03c 8014		;					LD		DUMP_END_ATUAL	; Se não acabou, pego o valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
-a03e 4004		;					+		LD_VAZIA
-a040 9042		;					MM 		DUMP_GET_VALOR
-8042 0000		;	DUMP_GET_VALOR	K		/0000			
-8044 0000		;	DUMP_PD_LOOP	K		/0000			; Salvo no disco
-a046 8014		;					LD		DUMP_END_ATUAL  ; Incremento o endereço atual
-a048 4000		;					+		INC_ADDRESS
-a04a 9014		;					MM 		DUMP_END_ATUAL
-a04c 8016		;					LD 		DUMP_CONTADOR	; Incremento o contador e volto ao início
-a04e 4006		;					+		INCREASE 	
-a050 9016		;					MM 		DUMP_CONTADOR
-a052 0036		;					JP 		DUMP_LOOP
-a054 b01a		;	DUMP_FIM		RS 		DUMPER
+a030 9034		;					MM 		DUMP_SAVE_INI    ; DUMP da posição inicial	
+a032 800a		;					LD 		DUMP_INI
+8034 0000		;	DUMP_SAVE_INI	K 		/0000			
+				
+a036 8018		;					LD 		DUMP_PD				; DUMP do numero total de palavras	
+a038 903c		;					MM 		DUMP_SAVE_TAM    
+a03a 800c		;					LD 		DUMP_TAM
+803c 0000		;	DUMP_SAVE_TAM	K 		/0000		
+
+										
+
+a03e 8016		;	DUMP_LOOP_DUMP  LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igual a 0. Se é igual, então acabou e vai para o final da Subrotina		
+a040 1094		;					JZ 		DUMP_FIM		
+
+8042 3000		;					LV		/0000			; Se não acabou, zero o CHECKSUM
+a044 901a		;					MM 		DUMP_CHECKSUM
+
+a046 8018		;					LD 		DUMP_PD			; Dou dump no endereço atual (endereço inicial do bloco)
+a048 904c		;					MM 		DUMP_SAVE_ADDR    
+a04a 8014		;					LD 		DUMP_END_ATUAL
+804c 0000		;	DUMP_SAVE_ADDR	K 		/0000
+
+a04e 8016		;					LD 		DUMP_CONTADOR		; Se contador < tamanho do bloco (DUMP_BL) o tamanho é o proprio contador. Se não, é o tamanho max DUMP_BL
+a050 5010		;					- 		DUMP_BL
+a052 2062		;					JN		DUMP_BMIN	
+				
+a054 8018		;					LD 		DUMP_PD			; Se estou aqui, contador > bloco e dumpo o tamanho do bloco max
+a056 905a		;					MM 		DUMP_SAVE_BMAX    
+a058 8010		;					LD 		DUMP_BL
+805a 0000		;	DUMP_SAVE_BMAX	K 		/0000
+a05c 8010		;					LD 	 	DUMP_BL
+a05e 901c		;					MM 		DUMP_BL_ATUAL
+a060 006e		;					JP		DUMP_BLK_LOOP	
+
+a062 8018		;	DUMP_BMIN 		LD 		DUMP_PD			; Se estou aqui, contador < bloco e dumpo o tamanho do contador e o salvo como tamanho do bloco
+a064 9068		;					MM 		DUMP_SAVE_BMIN    
+a066 8016		;					LD 		DUMP_CONTADOR
+8068 0000		;	DUMP_SAVE_BMIN	K 		/0000
+a06a 8016		;					LD 		DUMP_CONTADOR
+a06c 901c		;					MM 		DUMP_BL_ATUAL
+
+a06e 801c		;	DUMP_BLK_LOOP	LD 		DUMP_BL_ATUAL ; Se DUMP_BL_ATUAL for 0, já li todo o bloco e volto para iniciar outro bloco		
+a070 103e		;					JZ		DUMP_LOOP_DUMP
+
+a072 8014		;					LD		DUMP_END_ATUAL	; Pego no valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
+a074 4004		;					+		LD_VAZIA
+a076 9078		;					MM 		DUMP_GET_VALOR
+8078 0000		;	DUMP_GET_VALOR	K		/0000		
+807a 0000		;	DUMP_PD_LOOP	K		/0000			; Salvo esse valor no disco com a instrução gerada no início
+
+a07c 401a		;					+		DUMP_CHECKSUM 	; Somo esse valor com CHECKSUM e salvo o novo CHECKSUM
+a07e 901a		;					MM 		DUMP_CHECKSUM 	
+
+a080 8014		;					LD		DUMP_END_ATUAL  ; Incremento o endereço atual
+a082 4000		;					+		INC_ADDRESS
+a084 9014		;					MM 		DUMP_END_ATUAL
+
+a086 801c		;					LD 		DUMP_BL_ATUAL	; Decremento o tamanho do bloco 
+a088 5006		;					-		INCREASE
+a08a 901c		;					MM      DUMP_BL_ATUAL
+
+a08c 8016		;					LD 		DUMP_CONTADOR	; Decremento o contador geral e volto ao início
+a08e 5006		;					-		INCREASE 	
+a090 9016		;					MM 		DUMP_CONTADOR
+				
+a092 006e		;					JP 		DUMP_BLK_LOOP
+
+a094 b01e		;	DUMP_FIM		RS 		DUMPER
