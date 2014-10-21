@@ -66,6 +66,7 @@ LOADER_LOOP_FILE	LD 		LOADER_CONTADOR 	; Verifico se o contador é zero. Se for,
 					MM 		LOADER_SAVE_WORD
 LOADER_GET_WORD     K		/0000				; Para tanto, uso GD e MM criadas dinamicamente	
 LOADER_SAVE_WORD	K  		/0000
+					MM 		LOADER_OUT 			; Salvo o valor atual como saída da subrotina
 					LD 		LOADER_END_ATUAL	; Atualizo o endereço e o contador
 					+ 		INC_ADDRESS
 					MM 		LOADER_END_ATUAL
