@@ -16,7 +16,7 @@ INVALID_ADDR	K		/1000       ; Constante de endereço invalido. Qualquer endereç
 LD_VAZIA    	LD 		/0000		; Load vazia para criação de intruções dinamicamente
 INCREASE		K 		/0001		; Constante de decremento de contagem
 
-PD_DISCO_VAZIA	PD 		/300 		; Put Data apenas com o tipo disco especificado 
+PD_VAZIA_D		PD 		/300 		; Put Data apenas com o tipo disco especificado 
 
 ; Variáveis de DUMPER ================================================================
 DUMP_INI 		K 		/0000			; Endereço onde começa o dump
@@ -38,7 +38,7 @@ DUMPER 			K 		/0000
 				MM 		DUMP_CONTADOR
 
 				LD 		DUMP_UL			; Crio a instrução de PD com a Unidade Lógica atual
-				+		PD_DISCO_VAZIA
+				+		PD_VAZIA_D	
 				
 				MM 		DUMP_PD         ; Salvo em todos os lugares em que ela é usada
 				MM 		DUMP_PD_LOOP	

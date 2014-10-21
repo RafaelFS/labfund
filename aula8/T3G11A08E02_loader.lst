@@ -1,0 +1,56 @@
+; Subrotina LOADER
+; Grava na memória os dados presentes em um arquivo
+				;						&       /0000
+;Exportando LOADER  ==================================================================
+201e 0000 ; "LOADER>"		;	LOADER 		>  
+2000 0000 ; "LOADER_UL>"		;	LOADER_UL 	>	
+
+
+; Variáveis de LOADER ================================================================
+8000 0000		;	LOADER_UL 			K 		/0000			; Unidade logica do disco a ser lido
+8002 0000		;	LOADER_INI 			K 		/0000			; Endereço onde começa o load
+8004 0000		;	LOADER_TAM 			K 		/0000			; Numero total de palavras a serem lidas
+8006 0000		;	LOADER_BL 			K 		/0000			; Tamanho do bloco
+8008 0000		;	LOADER_EXE 			K 		/0000			; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+800a 0000		;	LOADER_END_ATUAL	K 		/0000			; Endereço atual que será "dumpado"
+800c 0000		;	LOADER_CONTADOR		K 		/0000			; Contador que armazena o número de palavras a serem lidas
+800e 0000		;	LOADER_GD  			K		/0000			; Intrução de Get Data montada com a unidade lógica atual
+8010 0000		;	LOADER_OUT			K 		/0000			; Mensagem de saída do loader
+
+; Constantes usadas em LOADER
+8012 0002		;	INC_ADDRESS			K		/0002		; Constante de incremento de endereço
+8014 1000		;	INVALID_ADDR		K		/1000       ; Constante de endereço invalido. Qualquer endereço igual ou maior que ele é inválido
+8016 8000		;	LD_VAZIA    		LD 		/0000		; Load vazia para criação de intruções dinamicamente
+8018 0001		;	INCREASE			K 		/0001		; Constante de decremento de contagem
+	
+801a d300		;	GD_VAZIA_D			GD 		/300 		; Get Data apenas com o tipo disco especificado 
+801c fffe		;	NAO_CABE			K 		/FFFE			
+	
+801e 0000		;	LOADER				K 		/0000
+a020 8000		;						LD 		LOADER_UL		; Crio a instrução de GD com a Unidade Lógica atual
+a022 401a		;						+		GD_VAZIA_D	
+a024 900e		;						MM 		LOADER_GD       ; Salvo-a em todos os lugares em que ela é usada
+	
+a026 800e		;						LD 		LOADER_GD 		; Obtenho do arquivo o endereço inicial e salvo na variável correspondente
+a028 902a		;						MM      LOADER_SAVE_INI		
+802a 0000		;	LOADER_SAVE_INI		K		/0000			
+a02c 9002		;						MM 		LOADER_INI
+
+a02e 800e		;						LD 		LOADER_GD 		; Obtenho do arquivo o numero total de palavras e salvo na variável correspondente
+a030 9032		;						MM      LOADER_SAVE_TAM		
+8032 0000		;	LOADER_SAVE_TAM		K		/0000			
+a034 9004		;						MM 		LOADER_TAM
+
+a036 801c		;						LD 		NAO_CABE		; Inicio saída com a mensagem que não cabe
+a038 9010		;						MM 		LOADER_OUT      
+a03a 8004		;						LD 		LOADER_TAM 		; Comparo o ultimo endereço a ser ocupado (endereço inicial + (nwords-1)*espaço_de_um_endereço) com o endereço invalido...
+a03c 5018		;						-       INCREASE
+a03e 6012		;						*		INC_ADDRESS
+a040 4002		;						+		LOADER_INI
+a042 5014		;						- 		INVALID_ADDR
+a044 2048		;						JN		LOADER_COUBE	; Se for menor, cabe
+a046 004c		;						JP		LOADER_FIM		; Se não, pulo para o fim
+8048 3aaa		;	LOADER_COUBE		LV 		/AAA
+a04a 9010		;						MM 		LOADER_OUT
+a04c 8010		;	LOADER_FIM			LD 		LOADER_OUT
+a04e b01e		;						RS 		LOADER
