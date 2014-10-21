@@ -117,5 +117,9 @@ DUMP_PD_LOOP	K		/0000			; Salvo esse valor no disco com a instrução gerada no 
 				
 				JP 		DUMP_BLK_LOOP
 
-DUMP_FIM		RS 		DUMPER
+DUMP_FIM		LD 		DUMP_PD			; Antes do fim, dou dump no endereço da primeira instrução executável
+				MM 		DUMP_SAVE_EXE    
+				LD 		DUMP_EXE
+DUMP_SAVE_EXE 	K 		/0000				
+				RS 		DUMPER
 				#		DUMPER
