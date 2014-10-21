@@ -117,4 +117,8 @@ a09c 9016		;					MM 		DUMP_CONTADOR
 				
 a09e 006e		;					JP 		DUMP_BLK_LOOP
 
-a0a0 b01e		;	DUMP_FIM		RS 		DUMPER
+a0a0 8018		;	DUMP_FIM		LD 		DUMP_PD			; Antes do fim, dou dump no endereço da primeira instrução executável
+a0a2 90a6		;					MM 		DUMP_SAVE_EXE    
+a0a4 8012		;					LD 		DUMP_EXE
+80a6 0000		;	DUMP_SAVE_EXE 	K 		/0000				
+a0a8 b01e		;					RS 		DUMPER
