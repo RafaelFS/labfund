@@ -85,10 +85,16 @@ DUMP_SAVE_BMIN	K 		/0000
 				LD 		DUMP_CONTADOR
 				MM 		DUMP_BL_ATUAL
 
-DUMP_BLK_LOOP	LD 		DUMP_BL_ATUAL ; Se DUMP_BL_ATUAL for 0, já li todo o bloco e volto para iniciar outro bloco		
-				JZ		DUMP_LOOP_DUMP
+DUMP_BLK_LOOP	LD 		DUMP_BL_ATUAL 		; Se DUMP_BL_ATUAL for 0, já li todo o bloco, então salvo o checksum e volto para iniciar outro bloco		
+				JZ		DUMP_CSUM_LOAD
+				JP		DUMP_VALOR_DUMP		; Senão pulo para continuação
+DUMP_CSUM_LOAD	LD 		DUMP_PD				; Se estou aqui,  dumpo o CHECKSUM
+				MM 		DUMP_SAVE_CSUM    
+				LD 		DUMP_CHECKSUM
+DUMP_SAVE_CSUM	K 		/0000			
+				JP		DUMP_LOOP_DUMP
 
-				LD		DUMP_END_ATUAL	; Pego no valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
+DUMP_VALOR_DUMP	LD		DUMP_END_ATUAL	; Pego no valor presente no endereço atual (com a ajuda de um load criado dinamicamente)
 				+		LD_VAZIA
 				MM 		DUMP_GET_VALOR
 DUMP_GET_VALOR	K		/0000		
