@@ -108,9 +108,14 @@ LOADER_BLK_END		LD 		LOADER_GD				; Antes de terminar, pego o checksum indicado 
 					MM      LOADER_GET_CS				
 LOADER_GET_CS		K		/0000					
 					MM 		LOADER_CS_ORIGINAL
-					JP      LOADER_LOOP_FILE 		; Retorno ao inicio do loop do arquivo
-	
-LOADER_FIM_OK  	 	LD 		LOADER_GD				; Antes de terminar, pego o endereço da primeira instrução executável
+
+					-		LOADER_CS_OBTIDO 		; Já estou com o valor do Checksum obtido no arquivo então subtraio do calculado
+					JZ      LOADER_LOOP_FILE 		; Se for 0, tudo ok e retorno ao inicio do loop do arquivo
+					LD 		NAO_CONFERE 			; Se não for 0, houve algum erro e coloco o valor do erro de checksum na sáida
+					MM 		LOADER_OUT
+					JP 		LOADER_FIM              ; Com o erro, pulo direto para o fim da subrotina
+
+LOADER_FIM_OK  	 	LD 		LOADER_GD				; Antes de terminar, pego o endereço da primeira instrução executável e coloco na saída
 					MM      LOADER_GET_EXE				
 LOADER_GET_EXE		K		/0000					
 					MM 		LOADER_OUT
