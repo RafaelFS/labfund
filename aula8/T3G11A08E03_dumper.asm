@@ -65,15 +65,21 @@ DUMP_LOOP_DUMP  LD		DUMP_CONTADOR 	; Pego o CONTADOR atual e verifico se é igua
 				MM 		DUMP_SAVE_ADDR    
 				LD 		DUMP_END_ATUAL
 DUMP_SAVE_ADDR	K 		/0000
+				+		DUMP_CHECKSUM 	; Somo o valor do endereço atual com CHECKSUM e salvo o novo CHECKSUM
+				MM 		DUMP_CHECKSUM 
 
 				LD 		DUMP_CONTADOR		; Se contador < tamanho do bloco (DUMP_BL) o tamanho é o proprio contador. Se não, é o tamanho max DUMP_BL
 				- 		DUMP_BL
 				JN		DUMP_BMIN	
 				
 				LD 		DUMP_PD			; Se estou aqui, contador > bloco e dumpo o tamanho do bloco max
-				MM 		DUMP_SAVE_BMAX    
+				MM 		DUMP_SAVE_BMAX    				
 				LD 		DUMP_BL
 DUMP_SAVE_BMAX	K 		/0000
+				
+				+		DUMP_CHECKSUM 	; Somo esse valor do tamanho do bloco com CHECKSUM e salvo o novo CHECKSUM
+				MM 		DUMP_CHECKSUM 
+
 				LD 	 	DUMP_BL
 				MM 		DUMP_BL_ATUAL
 				JP		DUMP_BLK_LOOP	
@@ -82,6 +88,10 @@ DUMP_BMIN 		LD 		DUMP_PD			; Se estou aqui, contador < bloco e dumpo o tamanho d
 				MM 		DUMP_SAVE_BMIN    
 				LD 		DUMP_CONTADOR
 DUMP_SAVE_BMIN	K 		/0000
+
+				+		DUMP_CHECKSUM 	; Somo o valor do tamanho do bloco com CHECKSUM e salvo o novo CHECKSUM
+				MM 		DUMP_CHECKSUM 
+
 				LD 		DUMP_CONTADOR
 				MM 		DUMP_BL_ATUAL
 

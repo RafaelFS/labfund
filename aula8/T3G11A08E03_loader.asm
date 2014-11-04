@@ -67,14 +67,20 @@ LOADER_BLOCK_START	LV 		/0000					; Reseto o checksum calculado
 					MM      LOADER_CS_OBTIDO    	
 	
 					LD 		LOADER_GD 				; Obtenho o endereço inicial do bloco
-					MM      LOADER_GET_BLK_END				
+					MM      LOADER_GET_BLK_END		
 LOADER_GET_BLK_END	K		/0000					
 					MM 		LOADER_END_BLOCO	
-															
+													
+					+		LOADER_CS_OBTIDO		; Somo o endereço inicial do bloco ao checksum
+					MM 		LOADER_CS_OBTIDO
+
 					LD 		LOADER_GD 				; Obtenho o tamanho do bloco
 					MM      LOADER_GET_BLK_TAM				
 LOADER_GET_BLK_TAM	K		/0000					
 					MM 		LOADER_BL
+
+					+		LOADER_CS_OBTIDO		; Somo o endereço inicial do bloco ao checksum
+					MM 		LOADER_CS_OBTIDO
 
 					LD 		LOADER_END_BLOCO 		; Seto o endereço atual com o endereço inicial do bloco
 					MM 		LOADER_END_ATUAL
@@ -83,7 +89,7 @@ LOADER_BLK_LOOP		LD      LOADER_GD				; Vou ler os dados do bloco
 					MM 		LOADER_GET_WORD	
 					LD 		LOADER_END_ATUAL	
 					+ 		MM_VAZIA	
-					MM 		LOADER_SAVE_WORD	
+					MM 		LOADER_SAVE_WORD	    
 LOADER_GET_WORD     K		/0000					; Para tanto, uso GD e MM criadas dinamicamente	
 LOADER_SAVE_WORD	K  		/0000	
 					MM 		LOADER_OUT 				; Salvo o valor atual como saída da subrotina
