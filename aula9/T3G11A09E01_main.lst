@@ -1,0 +1,210 @@
+				
+; Coloque aqui seus imports
+4000 0000 ; "GD_VAZIA_D<"		;	GD_VAZIA_D <
+4001 0000 ; "DBAR<"		;	DBAR 	   <
+4002 0000 ; "DSPACE<"		;	DSPACE 	   <
+4003 0000 ; "BARSTAR<"		;	BARSTAR    <
+4004 0000 ; "JB<"		;	JB 		   <
+4005 0000 ; "EOL<"		;	EOL 	   <
+4006 0000 ; "EOF<"		;	EOF 	   <
+4007 0000 ; "DU<"		;	DU 		   <
+4008 0000 ; "LO<"		;	LO 		   <
+
+4009 0000 ; "LEITURA_UL<"		;	LEITURA_UL <
+4010 0000 ; "L_UL<"		;	L_UL 	   <
+4011 0000 ; "L_WORD<"		;	L_WORD 	   <
+
+4012 0000 ; "CHTOI<"		;	CHTOI				<			
+4013 0000 ; "CHTOI_IN1<"		;	CHTOI_IN1		 	<           ; Endereço de entrada da primeira palavra
+4014 0000 ; "CHTOI_IN2<"		;	CHTOI_IN2 			<       	; Endereço de entrada da segunda palavra
+4015 0000 ; "CHTOI_WORD<"		;	CHTOI_WORD	     	<       	; Word final
+4016 0000 ; "CHTOI_AUX<"		;	CHTOI_AUX 			<			
+4017 0000 ; "CHTOI_D<"		;	CHTOI_D 			<			
+4018 0000 ; "CHTOI_D1<"		;	CHTOI_D1          	<       	; Digito 1 
+4019 0000 ; "CHTOI_D2<"		;	CHTOI_D2  	     	<       	; Digito 2 
+4020 0000 ; "CHTOI_D3<"		;	CHTOI_D3  	     	<       	; Digito 3 
+4021 0000 ; "CHTOI_D4<"		;	CHTOI_D4  	     	<       	; Digito 4 
+
+4022 0000 ; "LOADER<"		;	LOADER 		<  
+4023 0000 ; "LOADER_UL<"		;	LOADER_UL 	<	
+
+4024 0000 ; "DUMPER<"		;	DUMPER 		<  
+4025 0000 ; "DUMP_INI<"		;	DUMP_INI 	<	; Endereço onde começa o dump
+4026 0000 ; "DUMP_TAM<"		;	DUMP_TAM 	<	; Numero total de palavras a serem "dumpadas"
+4027 0000 ; "DUMP_UL<"		;	DUMP_UL 	<	; Unidade logica do disco a ser usado
+4028 0000 ; "DUMP_BL<"		;	DUMP_BL 	<	; Tamanho do bloco
+4029 0000 ; "DUMP_EXE<"		;	DUMP_EXE 	<	; Endereço onde começaria a execução (valor dummy, apenas para manter o formato)
+
+				;					& 			/0000
+a000 0008		;	MAIN			JP 			INI		; salta para o início do programa
+8002 0000		;	UL				K 			/0000 	; parâmetro: UL onde está o arquivo de batch
+8004 0000		;	WORD_1 			K 			/0000 	; variavel da palavra lida na UL
+8006 0000		;	WORD_2 			K 			/0000
+		
+a008 8002		;	INI				LD 			UL				;
+d00a 9010		;					MM 			L_UL 			;
+d00c a009		;					SC 			LEITURA_UL
+d00e 5001		;					-			DBAR 			;
+a010 1012		;					JZ 			OUTRA_LEITURA 	;
+d012 a009		;	OUTRA_LEITURA 	SC 			LEITURA_UL		;
+d014 5004		;					- 			JB 				;
+a016 101a		;					JZ 			INICIO_JOB 		;
+a018 010c		;					JP 			ERRO_1			;
+d01a a009		;	INICIO_JOB		SC 			LEITURA_UL 		;
+d01c 5005		;					- 			EOL 			;
+a01e 1022		;					JZ			LOOP_COMANDO
+a020 0112		;					JP			ERRO_2
+d022 a009		;	LOOP_COMANDO 	SC 			LEITURA_UL
+d024 5001		;					- 			DBAR
+a026 1036		;					JZ 			VERIFICA_COMANDO
+d028 4001		;					+ 			DBAR
+d02a 5006		;					- 			EOF
+a02c 111e		;					JZ 			ERRO_4
+d02e 4006		;					+ 			EOF
+d030 5003		;					- 			BARSTAR
+a032 112a		;					JZ 			FIM_JOB
+a034 0124		;					JP 			ERRO_5
+
+d036 a009		;	VERIFICA_COMANDO SC 		LEITURA_UL 		;
+d038 5007		;					- 			DU
+a03a 1044		;					JZ			COMANDO_DU
+d03c 8011		;					LD 			L_WORD
+d03e 5008		;					- 			LO
+a040 10e4		;					JZ 			COMANDO_LO
+a042 0112		;					JP 			ERRO_2
+
+d044 a009		;	COMANDO_DU 		SC 			LEITURA_UL
+d046 5005		;					- 			EOL
+a048 104c		;					JZ 			CONTINUA_DU
+a04a 0124		;					JP 			ERRO_5
+d04c a009		;	CONTINUA_DU 	SC 			LEITURA_UL
+a04e 9004		;					MM 			WORD_1
+a050 3004		;					LV 			WORD_1
+d052 9013		;					MM 			CHTOI_IN1
+d054 a009		;					SC 			LEITURA_UL
+a056 9006		;					MM 			WORD_2
+a058 3006		;					LV 			WORD_2
+d05a 9014		;					MM 			CHTOI_IN2
+d05c a012		;					SC 			CHTOI
+d05e 8015		;					LD 			CHTOI_WORD
+d060 9028		;					MM 			DUMP_BL
+d062 a009		;					SC 			LEITURA_UL
+d064 5002		;					-			DSPACE
+a066 106a		;					JZ 			CONTINUA_ARG2
+a068 0118		;					JP 			ERRO_3
+d06a a009		;	CONTINUA_ARG2	SC 			LEITURA_UL
+a06c 9004		;					MM 			WORD_1
+a06e 3004		;					LV 			WORD_1
+d070 9013		;					MM 			CHTOI_IN1
+d072 a009		;					SC 			LEITURA_UL
+a074 9006		;					MM 			WORD_2
+a076 3006		;					LV 			WORD_2
+d078 9014		;					MM 			CHTOI_IN2
+d07a a012		;					SC 			CHTOI
+d07c 8015		;					LD 			CHTOI_WORD
+d07e 9025		;					MM 			DUMP_INI
+d080 a009		;					SC 			LEITURA_UL
+d082 5002		;					-			DSPACE
+a084 1088		;					JZ 			CONTINUA_ARG3
+a086 0118		;					JP 			ERRO_3
+d088 a009		;	CONTINUA_ARG3	SC 			LEITURA_UL
+a08a 9004		;					MM 			WORD_1
+a08c 3004		;					LV 			WORD_1
+d08e 9013		;					MM 			CHTOI_IN1
+d090 a009		;					SC 			LEITURA_UL
+a092 9006		;					MM 			WORD_2
+a094 3006		;					LV 			WORD_2
+d096 9014		;					MM 			CHTOI_IN2
+d098 a012		;					SC 			CHTOI
+d09a 8015		;					LD 			CHTOI_WORD
+d09c 9026		;					MM 			DUMP_TAM
+d09e a009		;					SC 			LEITURA_UL
+d0a0 5002		;					-			DSPACE
+a0a2 10a6		;					JZ 			CONTINUA_ARG4
+a0a4 0118		;					JP 			ERRO_3
+d0a6 a009		;	CONTINUA_ARG4	SC 			LEITURA_UL
+a0a8 9004		;					MM 			WORD_1
+a0aa 3004		;					LV 			WORD_1
+d0ac 9013		;					MM 			CHTOI_IN1
+d0ae a009		;					SC 			LEITURA_UL
+a0b0 9006		;					MM 			WORD_2
+a0b2 3006		;					LV 			WORD_2
+d0b4 9014		;					MM 			CHTOI_IN2
+d0b6 a012		;					SC 			CHTOI
+d0b8 8015		;					LD 			CHTOI_WORD
+d0ba 9029		;					MM 			DUMP_EXE
+d0bc a009		;					SC 			LEITURA_UL
+d0be 5002		;					-			DSPACE
+a0c0 10c4		;					JZ 			CONTINUA_ARG5
+a0c2 0118		;					JP 			ERRO_3
+d0c4 a009		;	CONTINUA_ARG5	SC 			LEITURA_UL
+a0c6 9004		;					MM 			WORD_1
+a0c8 3004		;					LV 			WORD_1
+d0ca 9013		;					MM 			CHTOI_IN1
+d0cc a009		;					SC 			LEITURA_UL
+a0ce 9006		;					MM 			WORD_2
+a0d0 3006		;					LV 			WORD_2
+d0d2 9014		;					MM 			CHTOI_IN2
+d0d4 a012		;					SC 			CHTOI
+d0d6 8015		;					LD 			CHTOI_WORD
+d0d8 9027		;					MM 			DUMP_UL
+d0da a024		;					SC 			DUMPER
+d0dc a009		;					SC 			LEITURA_UL
+d0de 5005		;					-			EOL
+a0e0 1022		;					JZ 			LOOP_COMANDO
+a0e2 0124		;					JP 			ERRO_5						
+
+d0e4 a009		;	COMANDO_LO 		SC 			LEITURA_UL
+d0e6 5005		;					-  			EOL
+a0e8 10ec		;					JZ 			CONTINUA_LO
+a0ea 0124		;					JP 			ERRO_5
+d0ec a009		;	CONTINUA_LO 	SC 			LEITURA_UL
+a0ee 9004		;					MM 			WORD_1
+a0f0 3004		;					LV 			WORD_1
+d0f2 9013		;					MM 			CHTOI_IN1
+d0f4 a009		;					SC 			LEITURA_UL
+a0f6 9006		;					MM 			WORD_2
+a0f8 3006		;					LV 			WORD_2
+d0fa 9014		;					MM 			CHTOI_IN2
+d0fc a012		;					SC 			CHTOI
+d0fe 8015		;					LD 			CHTOI_WORD
+d100 9023		;					MM 			LOADER_UL
+d102 a022		;					SC 			LOADER
+d104 a009		;					SC 			LEITURA_UL
+d106 5005		;					- 			EOL
+a108 1022		;					JZ			LOOP_COMANDO
+a10a 0124		;					JP 			ERRO_5
+
+
+				
+810c 3001		;	ERRO_1 			LV 			/0001			;
+810e f0ee		;					OS 			/0EE 			;
+a110 0138		;					JP 			FIM 			;
+
+8112 3002		;	ERRO_2 			LV 			/0002			;
+8114 f0ee		;					OS 			/0EE 			;
+a116 0138		;					JP 			FIM 			;
+
+8118 3003		;	ERRO_3 			LV 			/0003			;
+811a f0ee		;					OS 			/0EE 			;
+a11c 0138		;					JP 			FIM 			;
+
+811e 3004		;	ERRO_4 			LV 			/0004			;
+8120 f0ee		;					OS 			/0EE 			;
+a122 0138		;					JP 			FIM 			;
+
+8124 3005		;	ERRO_5 			LV 			/0005			;
+8126 f0ee		;					OS 			/0EE 			;
+a128 0138		;					JP 			FIM 			;
+
+d12a a009		;	FIM_JOB 		SC 			LEITURA_UL
+d12c 5006		;					- 			EOF
+a12e 1132		;					JZ 			SEM_ERRO
+a130 0124		;					JP 			ERRO_5
+
+8132 3000		;	SEM_ERRO 		LV 			/0000			;
+8134 f0ee		;					OS 			/0EE 			;
+a136 0138		;					JP 			FIM 			;
+
+a138 c138		;	FIM 	HM	FIM		; fim do programa
+

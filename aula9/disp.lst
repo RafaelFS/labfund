@@ -1,0 +1,6 @@
+0 0 mvn.dispositivo.Teclado
+1 0 mvn.dispositivo.Monitor
+3 0 mvn.dispositivo.Disco arq.bat b
+3 2 mvn.dispositivo.Disco arq1.txt b
+3 5 mvn.dispositivo.Disco arq2.txt b
+3 1 mvn.dispositivo.Disco dumper.txt b
