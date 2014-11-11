@@ -1,0 +1,20 @@
+; Coloque aqui seus imports
+
+				;			@ 	/0000
+0000 0004		;	MAIN	JP 	INI		; salta para o início do programa
+0002 0000		;	UL		K 	/0000 	; parâmetro: UL onde está o arquivo de batch
+
+0004 3000		;	INI		LV /0000			; coloque aqui o código do seu monitor batch
+0006 f0ee		;			OS /0EE
+0008 3001		;			LV /0001
+000a f0ee		;			OS /0EE
+000c 3002		;			LV /0002
+000e f0ee		;			OS /0EE
+0010 3003		;			LV /0003
+0012 f0ee		;			OS /0EE
+0014 3004		;			LV /0004
+0016 f0ee		;			OS /0EE
+0018 3005		;			LV /0005
+001a f0ee		;			OS /0EE
+001c c01c		;	FIM 	HM	FIM		; fim do programa
+
